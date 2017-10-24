@@ -1,0 +1,128 @@
+///
+/// Svaki algoritam koji cemo implementirati treba da:
+/// 1. Nasledi AlgorithmBase (koji predstavlja apstrakciju koja vodi racuna o animaciji i iscrtavanju)
+/// 2. Da implementira metod "runAlgorithm()" u kom ce biti implementacija algoritma.
+///
+/// Svaki put kada se promeni stanje algoritma (kada je potrebno promeniti crtez),
+/// potrebno je pozvati metod AlgorithmBase_updateCanvasAndBlock();
+/// Ovo je zapravo makro, koji pozove metod updateCanvasAndBlock() i u slucaju da
+/// detektuje da algoritam treba da se zaustavi (jedna bool promenljiva koja se
+/// postavlja na true kada kosirnik klikne "Stop"), samo se zamenjuje komandom
+/// return;
+///
+/// Razlog za ovaj mehanizam je to sto se algoritam izvrsava u okviru svoje niti i nije bezbedno
+/// (sa aspekta resursa) ubiti tu nit dok se ne zavrsi. Na ovaj nacin, svaki put
+/// kada se vrsi azuriranje crteza, proverava se i stanje pomenute logicke promenljive
+/// i ukoliko ona signalizira da treba da se zaustavimo, na mestu azuriranja crteza ce
+/// se naci komanda return; i na taj nacin smo postigli efekat koji smo zeleli
+/// (izaslo se iz funkcije koja se izvrsava u okviru niti za animaciju)
+
+#ifndef ALGORITHMBASE_H
+#define ALGORITHMBASE_H
+
+#include <QSemaphore>
+#include <QWidget>
+
+#include <vector>
+
+#define AlgorithmBase_updateCanvasAndBlock() \
+    if (updateCanvasAndBlock()) \
+    { \
+        return; \
+    }
+
+class AnimationThread;
+
+class AlgorithmBase: public QObject
+{
+    Q_OBJECT
+
+private:
+    static int constexpr INVALID_TIMER_ID = -1;
+public:
+    AlgorithmBase(QWidget *pRender, int delayMs);
+
+    ///
+    /// \brief runAlgorithm - funkcija koju ce svaka podklasa implementirati,
+    ///         a koja predstavlja izvrsavanje konkretnog algoritma
+    ///
+    virtual void runAlgorithm() = 0;
+    virtual void drawAlgorithm(QPainter &painter) const = 0;
+
+    ///
+    /// \brief startAnimation - funkcija za pokretanje animacije
+    ///     1. Pravi i pokrece nit za konkretan algoritam
+    ///     2. Pokrece tajmer
+    ///
+    void startAnimation();
+
+    ///
+    /// \brief pauseOrContinueAnimation - pauziranja, odnosno ponovno pokretanje animacije
+    ///         Ako je tajmer pokrenut, zaustavlja ga
+    ///         Ako tajmer nije pokrenut, pokrece ga
+    ///
+    void pauseOrContinueAnimation();
+
+    ///
+    /// \brief resetAnimation - zaustavljanje animacije
+    ///     1. Postavljanje logicke promenljive na true
+    ///     2. Pustanje semafora (da bi se animacija "nastavila", tj. da bi se doslo do updateCanvasAndBlock())
+    ///         2.1. U updateCanvasAndBlock ce se detektovati da je logicka promenljiva true i algoritam ce se zaustaviti
+    ///     3. Oslobadjanje odgovarajucih resursa
+    ///
+    void resetAnimation();
+
+    ///
+    /// \brief nextStep - izvrsavanje algoritma korak po korak
+    ///     1. Zaustavljanje tajmera (da bi se zaustavilo kontinuirano izvrsavanje algoritma)
+    ///     2. Oslobadjanje semafora (da bi se izvrsio jedan korak algoritma)
+    ///
+    void nextStep();
+
+    ///
+    /// \brief changeDelay - funkcija za promenu brzine animacije
+    /// \param delayMs - pauza izmedju dva koraka, izrazena u ms
+    ///
+    void changeDelay(int delayMs);
+
+signals:
+    void animationFinished();
+
+protected:
+    ///
+    /// \brief updateCanvasAndBlock - azuriranje crteza i blokiranje dok se semafor ne oslobodi
+    ///     1. Azuriranje crteza iz renderarea klase
+    ///     2. Blokiranje semafora (semafor se oslobadja u tajmeru, tako da se na taj nacin
+    ///         simulira animacija)
+    /// \return true ako animacija treba da se zaustavi, false u suprotnom
+    ///
+    bool updateCanvasAndBlock();
+
+
+
+    std::vector<QPoint> generateRandomPoints();
+    std::vector<QPoint> readPointsFromFile(std::string fileName);
+
+    /* Paarametri za iscrtavanje*/
+    QWidget *_pRenderer;
+
+private:
+    ///
+    /// \brief timerEvent - funkcija koja se poziva na svakih _delayMs ms.
+    ///     U njoj samo oslobadjamo semafor i na taj nacin omogucavamo da se predje na sledeci
+    ///     korak algoritma
+    /// \param event
+    ///
+    void timerEvent(QTimerEvent *event);
+
+    /* Parametri za animaciju */
+    int _delayMs;
+    int _timerId;
+    QSemaphore _semaphore;
+    bool _destroyAnimation;
+
+    /* Nit koja izvrsava algoritam */
+    AnimationThread *_pThread;
+};
+
+#endif // ALGORITHMBASE_H
