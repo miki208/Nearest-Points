@@ -26,15 +26,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    renderarea.cpp \
-    algorithmbase.cpp \
-    animationthread.cpp
-
+    	renderarea.cpp \
+    	algorithmbase.cpp \
+    	animationthread.cpp \
+        algorithms_practice/ga00_drawpolygon.cpp \
+    	algorithms_practice/ga01_sweepline.cpp \
+    algorithms_projects/ga00_emptyproject.cpp
+	
 HEADERS += \
         mainwindow.h \
-    renderarea.h \
-    algorithmbase.h \
-    animationthread.h
+    	renderarea.h \
+    	algorithmbase.h \
+    	animationthread.h \
+        algorithms_practice/ga00_drawpolygon.h \
+    	algorithms_practice/ga01_sweepline.h \
+    algorithms_projects/ga00_emptyproject.h
 
 FORMS += \
         mainwindow.ui

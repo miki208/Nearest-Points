@@ -70,18 +70,22 @@ void AlgorithmBase::timerEvent(QTimerEvent *event)
     _semaphore.release();
 }
 
-std::vector<QPoint> AlgorithmBase::generateRandomPoints()
+std::vector<QPoint> AlgorithmBase::generateRandomPoints(int pointsNum)
 {
-    srand((unsigned)time(0));
-    int xMax = 1000;
-    int yMax = 450;
+    srand(static_cast<unsigned>(time(0)));
 
-    int xMin = 10;
-    int yMin = 10;
+    int xMax = _pRenderer->width()-DRAWING_BORDER;
+    int yMax = _pRenderer->height() - DRAWING_BORDER;
+
+    int xMin = DRAWING_BORDER;
+    int yMin = DRAWING_BORDER;
+
     std::vector<QPoint> randomPoints;
 
-    for(int i=0; i < 20; i++)
-        randomPoints.emplace_back(xMin + rand()%(xMax-xMin), yMin + rand()%(yMax-yMin));
+    int xDiff = xMax-xMin;
+    int yDiff = yMax-yMin;
+    for(int i=0; i < pointsNum; i++)
+        randomPoints.emplace_back(xMin + rand()%xDiff, yMin + rand()%yDiff);
 
     return randomPoints;
 }
@@ -89,13 +93,11 @@ std::vector<QPoint> AlgorithmBase::generateRandomPoints()
 std::vector<QPoint> AlgorithmBase::readPointsFromFile(std::string fileName)
 {
     std::ifstream inputFile(fileName);
-
     std::vector<QPoint> points;
     int x, y;
     while(inputFile >> x >> y)
     {
         points.emplace_back(x, y);
     }
-
     return points;
 }

@@ -23,6 +23,20 @@ private:
     void algorithmOptionsSetEnabled(bool value);
     void makeNewAlgotirhm(std::string filename = "");
 
+    enum Practice_AlgorithmType {
+        EMPTY_PRACTICE = 0,
+        DRAW_POLYGON,
+        SWEEP_LINE,
+        MAX_PRACTICE = 99
+    };
+    enum Projects_AlgorithmType {
+        EMPTY_PROJECTS = 100,
+        /* Ovde se ubacuju enum-i za studentske projekte
+         * (nije potrebno navoditi konkretne brojeve)
+        */
+        MAX_PROJECTS = 199
+    };
+
 private slots:
     void on_algorithmType_currentIndexChanged(int index);
     void on_importDataFromFile_clicked();

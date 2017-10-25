@@ -11,7 +11,7 @@ RenderArea::RenderArea(QWidget *parent)
 void RenderArea::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
-    painter.drawRect(0,0, painter.window().width()-1, painter.window().height()-1);
+    painter.drawRect(0,0, width()-1, height()-1);
 
     if (_pAlgorithmBase)
     {

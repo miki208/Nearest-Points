@@ -6,6 +6,8 @@
 #include <fstream>
 
 #include "algorithmbase.h"
+#include "algorithms_practice/ga01_sweepline.h"
+#include "algorithms_practice/ga00_drawpolygon.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,7 +18,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle("Geometrijski algoritmi @ MATF");
 
-    ui->algorithmType->addItem("", 0);
+    ui->algorithmType->addItem("SA CASOVA VEZBI:", QVariant(EMPTY_PRACTICE));
+    ui->algorithmType->addItem("Demonstacija iscrtavanja", QVariant(DRAW_POLYGON));
+    ui->algorithmType->addItem("Brisuca prava mini demo", QVariant(SWEEP_LINE));
+    ui->algorithmType->insertSeparator(MAX_PRACTICE);
+
+    ui->algorithmType->addItem("STUDENTSKI PROJEKTI:", QVariant(EMPTY_PROJECTS));
+    /* Ovde se ubacuju opcije za izbor studentskih projekata [START]*/
+
+    /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
+    ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
     ui->importDataFromFile->setEnabled(false);
     ui->generateRandomData->setEnabled(false);
@@ -55,11 +66,20 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
     delete _pAlgorithm;
     _pAlgorithm = nullptr;
 
-    _filename = filename;
+    int currentIndex = ui->algorithmType->currentIndex();
+    int currentAlgorithm = ui->algorithmType->itemData(currentIndex).toInt();
 
-    switch (ui->algorithmType->currentIndex())
+    _filename = filename;
+    switch (currentAlgorithm)
     {
-        case 0:
+        case EMPTY_PRACTICE:
+        case EMPTY_PROJECTS:
+            break;
+        case DRAW_POLYGON:
+             _pAlgorithm = new DrawPolygon(_renderArea, _delayMs, _filename);
+             break;
+        case SWEEP_LINE:
+            _pAlgorithm = new SweepLine(_renderArea, _delayMs, _filename);
             break;
     }
 
@@ -72,7 +92,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
 
 void MainWindow::on_algorithmType_currentIndexChanged(int index)
 {
-    if(index != 0)
+    int currentAlgorithm = ui->algorithmType->itemData(index).toInt();
+
+    if(currentAlgorithm != EMPTY_PRACTICE && currentAlgorithm != EMPTY_PROJECTS)
     {
         ui->importDataFromFile->setEnabled(true);
         ui->generateRandomData->setEnabled(true);

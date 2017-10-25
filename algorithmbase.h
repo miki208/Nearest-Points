@@ -2,6 +2,7 @@
 /// Svaki algoritam koji cemo implementirati treba da:
 /// 1. Nasledi AlgorithmBase (koji predstavlja apstrakciju koja vodi racuna o animaciji i iscrtavanju)
 /// 2. Da implementira metod "runAlgorithm()" u kom ce biti implementacija algoritma.
+/// 3. Da implementira metod "drawAlgorithm" u kom ce biti implementirano iscrtavanje
 ///
 /// Svaki put kada se promeni stanje algoritma (kada je potrebno promeniti crtez),
 /// potrebno je pozvati metod AlgorithmBase_updateCanvasAndBlock();
@@ -39,6 +40,8 @@ class AlgorithmBase: public QObject
 
 private:
     static int constexpr INVALID_TIMER_ID = -1;
+    static int constexpr DRAWING_BORDER = 10;
+    static int constexpr DEFAULT_POINTS_NUM = 20;
 public:
     AlgorithmBase(QWidget *pRender, int delayMs);
 
@@ -98,9 +101,7 @@ protected:
     ///
     bool updateCanvasAndBlock();
 
-
-
-    std::vector<QPoint> generateRandomPoints();
+    std::vector<QPoint> generateRandomPoints(int pointsNum = DEFAULT_POINTS_NUM);
     std::vector<QPoint> readPointsFromFile(std::string fileName);
 
     /* Paarametri za iscrtavanje*/
