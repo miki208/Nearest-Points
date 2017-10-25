@@ -18,7 +18,7 @@ Studenti:
 * Napraviti folder na lokalnom računaru, pozicionirati se u folder i klonirati repozirotijum komandom ```git clone https://bitbucket.org/ga1718team/algorithms.git ```
 
 ### Struktura direktorijuma ###
-* algorithms
+algorithms
   * algorithms_practice [Sadrži primere sa časova vežbi]
     * ga00_alg1.cpp
     * ga00_alg1.h
