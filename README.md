@@ -18,24 +18,24 @@ Studenti:
 * Napraviti folder na lokalnom računaru, pozicionirati se u folder i klonirati repozirotijum komandom ```git clone https://bitbucket.org/ga1718team/algorithms.git ```
 
 ### Struktura direktorijuma ###
-algorithms
-* algorithms_practice [Sadrži primere sa časova vežbi]
-  * ga00_alg1.cpp
-  * ga00_alg1.h
-  * ...
-  * ...
-  * gaXY_algXY.cpp
-  * gaXY_algXY.h 
-* algorithms_projects [Sadrži studentske projekte]
-  * ga00_emptyProject.cpp
-  * ga00_emptyProject.h
-  * ga01_temaPrvogStudentaIzTabele.cpp
-  * ga01_temaPrvogStudentaIzTabele.h
-  * ga02_temaDrugogStudentaIzTabele.cpp
-  * ga02_temaDrugogStudentaIzTabele.h
-  * ...
-  * ...   
-* ostali falovi 
+
+  * algorithms_practice [Sadrži primere sa časova vežbi]
+    * ga00_alg1.cpp
+    * ga00_alg1.h
+    * ...
+    * ...
+    * gaXY_algXY.cpp
+    * gaXY_algXY.h 
+  * algorithms_projects [Sadrži studentske projekte]
+    * ga00_emptyProject.cpp
+    * ga00_emptyProject.h
+    * ga01_temaPrvogStudentaIzTabele.cpp
+    * ga01_temaPrvogStudentaIzTabele.h
+    * ga02_temaDrugogStudentaIzTabele.cpp
+    * ga02_temaDrugogStudentaIzTabele.h
+    * ...
+    * ...   
+  * ostali falovi 
 
 ### Osnovne komande
 * **git pull** - da prevučete trenutni kod 
@@ -44,4 +44,3 @@ algorithms
 * **git push origin master** - da posaljete svoje izmene na server
 
 #### ***Svaki put kada nešto radite na projektu, odradite pull komandu pre nego što počnete (kako biste uvek radili sa najnovijom verzijom koda)*** ####
-
