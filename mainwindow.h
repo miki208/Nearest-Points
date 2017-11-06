@@ -27,6 +27,7 @@ private:
         EMPTY_PRACTICE = 0,
         DRAW_POLYGON,
         SWEEP_LINE,
+        CONVEX_HULL,
         MAX_PRACTICE = 99
     };
     enum Projects_AlgorithmType {

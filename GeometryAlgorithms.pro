@@ -29,18 +29,23 @@ SOURCES += \
     	renderarea.cpp \
     	algorithmbase.cpp \
     	animationthread.cpp \
+        utils.cpp \
         algorithms_practice/ga00_drawpolygon.cpp \
     	algorithms_practice/ga01_sweepline.cpp \
-    algorithms_projects/ga00_emptyproject.cpp
+        algorithms_practice/ga02_convexhull.cpp \
+        algorithms_projects/ga00_emptyproject.cpp
+
 	
 HEADERS += \
         mainwindow.h \
     	renderarea.h \
     	algorithmbase.h \
     	animationthread.h \
+        utils.h \
         algorithms_practice/ga00_drawpolygon.h \
     	algorithms_practice/ga01_sweepline.h \
-    algorithms_projects/ga00_emptyproject.h
+        algorithms_projects/ga00_emptyproject.h \
+        algorithms_practice/ga02_convexhull.h
 
 FORMS += \
         mainwindow.ui

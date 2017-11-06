@@ -8,6 +8,7 @@
 #include "algorithmbase.h"
 #include "algorithms_practice/ga01_sweepline.h"
 #include "algorithms_practice/ga00_drawpolygon.h"
+#include "algorithms_practice/ga02_convexhull.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("SA CASOVA VEZBI:", QVariant(EMPTY_PRACTICE));
     ui->algorithmType->addItem("Demonstacija iscrtavanja", QVariant(DRAW_POLYGON));
     ui->algorithmType->addItem("Brisuca prava mini demo", QVariant(SWEEP_LINE));
+    ui->algorithmType->addItem("Konveksni omotac", QVariant(CONVEX_HULL));
+
     ui->algorithmType->insertSeparator(MAX_PRACTICE);
 
     ui->algorithmType->addItem("STUDENTSKI PROJEKTI:", QVariant(EMPTY_PROJECTS));
@@ -80,6 +83,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
              break;
         case SWEEP_LINE:
             _pAlgorithm = new SweepLine(_renderArea, _delayMs, _filename);
+            break;
+    case CONVEX_HULL:
+            _pAlgorithm = new ConvexHull(_renderArea, _delayMs, _filename);
             break;
     }
 

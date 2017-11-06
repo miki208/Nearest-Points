@@ -1,8 +1,9 @@
 ///
 /// Svaki algoritam koji cemo implementirati treba da:
 /// 1. Nasledi AlgorithmBase (koji predstavlja apstrakciju koja vodi racuna o animaciji i iscrtavanju)
-/// 2. Da implementira metod "runAlgorithm()" u kom ce biti implementacija algoritma.
+/// 2. Da implementira metod "runAlgorithm" u kom ce biti implementacija algoritma.
 /// 3. Da implementira metod "drawAlgorithm" u kom ce biti implementirano iscrtavanje
+/// 4. Da implementira metod "runNaiveAlgorithm" u kom ce biti implementacija algoritma grube sile
 ///
 /// Svaki put kada se promeni stanje algoritma (kada je potrebno promeniti crtez),
 /// potrebno je pozvati metod AlgorithmBase_updateCanvasAndBlock();
@@ -41,7 +42,6 @@ class AlgorithmBase: public QObject
 private:
     static int constexpr INVALID_TIMER_ID = -1;
     static int constexpr DRAWING_BORDER = 10;
-    static int constexpr DEFAULT_POINTS_NUM = 20;
 public:
     AlgorithmBase(QWidget *pRender, int delayMs);
 
@@ -92,6 +92,8 @@ signals:
     void animationFinished();
 
 protected:
+    static int constexpr DEFAULT_POINTS_NUM = 20;
+
     ///
     /// \brief updateCanvasAndBlock - azuriranje crteza i blokiranje dok se semafor ne oslobodi
     ///     1. Azuriranje crteza iz renderarea klase
@@ -106,6 +108,7 @@ protected:
 
     /* Paarametri za iscrtavanje*/
     QWidget *_pRenderer;
+
 
 private:
     ///
