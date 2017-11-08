@@ -16,6 +16,7 @@ public:
 public:
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
+    void runNaiveAlgorithm();
 
 private:
     std::vector<QLineF> _lineSegments;

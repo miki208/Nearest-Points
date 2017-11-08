@@ -196,6 +196,11 @@ void LineSegmentIntersection::drawAlgorithm(QPainter &painter) const
     painter.drawText(10,20, "Plavom bojom su obojene duzi koje se trenutno nalaze u statusu.");
 }
 
+void LineSegmentIntersection::runNaiveAlgorithm()
+{
+
+}
+
 void LineSegmentIntersection::deleteFromStatus(QLineF *l)
 {
     for(auto it = _statusQueue.begin(); it != _statusQueue.end(); ++it)

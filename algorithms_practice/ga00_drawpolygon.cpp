@@ -29,3 +29,8 @@ void DrawPolygon::drawAlgorithm(QPainter &painter) const
 
     painter.drawPolygon(_points.data(), _n);
 }
+
+void DrawPolygon::runNaiveAlgorithm()
+{
+
+}

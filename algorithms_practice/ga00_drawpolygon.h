@@ -15,10 +15,11 @@ public:
 public:
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
+    void runNaiveAlgorithm();
 
 private:
     std::vector<QPoint> _points;
-    int _n;
+    int _n; 
 };
 
 #endif // GA00_DRAWPOLYGON_H

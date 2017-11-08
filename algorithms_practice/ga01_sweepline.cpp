@@ -41,3 +41,8 @@ void SweepLine::drawAlgorithm(QPainter &painter) const
         painter.drawPoint(pt);
     }
 }
+
+void SweepLine::runNaiveAlgorithm()
+{
+
+}

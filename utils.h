@@ -3,6 +3,8 @@
 
 #include <QPoint>
 #include <QLine>
+#include <cmath>
+
 namespace utils
 {
     bool negativeOrientation(QPoint p1, QPoint p2, QPoint p3);

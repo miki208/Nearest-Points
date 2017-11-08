@@ -51,6 +51,7 @@ public:
     ///
     virtual void runAlgorithm() = 0;
     virtual void drawAlgorithm(QPainter &painter) const = 0;
+    virtual void runNaiveAlgorithm() = 0;
 
     ///
     /// \brief startAnimation - funkcija za pokretanje animacije
