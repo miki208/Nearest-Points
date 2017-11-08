@@ -105,6 +105,7 @@ protected:
 
     std::vector<QPoint> generateRandomPoints(int pointsNum = DEFAULT_POINTS_NUM);
     std::vector<QPoint> readPointsFromFile(std::string fileName);
+    std::vector<QLineF> generateRandomLines(int linesNum = DEFAULT_POINTS_NUM/2);
 
     /* Paarametri za iscrtavanje*/
     QWidget *_pRenderer;

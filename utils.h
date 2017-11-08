@@ -9,9 +9,9 @@ namespace utils
 
     double distance(QPoint a, QPoint b);
 
-    bool lineIntersection(QLine l1, QLine l2, QPoint* i);
+    bool lineIntersection(QLineF l1, QLineF l2, QPointF* i);
 
-    bool lineContainsPoint(QLine l, QPoint p);
+    bool lineContainsPoint(QLineF l, QPointF p);
 }
 
 #endif // COMMON_H

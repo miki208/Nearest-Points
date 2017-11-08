@@ -33,7 +33,8 @@ SOURCES += \
         algorithms_practice/ga00_drawpolygon.cpp \
     	algorithms_practice/ga01_sweepline.cpp \
         algorithms_practice/ga02_convexhull.cpp \
-        algorithms_projects/ga00_emptyproject.cpp
+        algorithms_projects/ga00_emptyproject.cpp \
+    algorithms_practice/ga03_linesegmentintersection.cpp
 
 	
 HEADERS += \
@@ -45,7 +46,9 @@ HEADERS += \
         algorithms_practice/ga00_drawpolygon.h \
     	algorithms_practice/ga01_sweepline.h \
         algorithms_projects/ga00_emptyproject.h \
-        algorithms_practice/ga02_convexhull.h
+        algorithms_practice/ga02_convexhull.h \
+    algorithms_practice/ga03_linesegmentintersection.h \
+    algorithms_practice/ga03_datastructures.h
 
 FORMS += \
         mainwindow.ui

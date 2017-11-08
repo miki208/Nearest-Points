@@ -101,3 +101,30 @@ std::vector<QPoint> AlgorithmBase::readPointsFromFile(std::string fileName)
     }
     return points;
 }
+
+std::vector<QLineF> AlgorithmBase::generateRandomLines(int linesNum)
+{
+    srand(static_cast<unsigned>(time(0)));
+
+    int xMax = _pRenderer->width()-DRAWING_BORDER;
+    int yMax = _pRenderer->height() - DRAWING_BORDER;
+
+    int xMin = DRAWING_BORDER;
+    int yMin = DRAWING_BORDER;
+
+    std::vector<QLineF> randomLines;
+
+    int xDiff = xMax-xMin;
+    int yDiff = yMax-yMin;
+    for(int i=0; i < linesNum; i++)
+    {
+        //Hocemo da p1 bude upper point, a p2 lower point
+        QPointF p1 = QPointF(xMin + rand()%xDiff, yMin + rand()%yDiff);
+        QPointF p2 = QPointF(xMin + rand()%xDiff, yMin + rand()%yDiff);
+        if(p1.y() < p2.y())
+            randomLines.emplace_back(p2, p1);
+        else
+            randomLines.emplace_back(p1, p2);
+    }
+    return randomLines;
+}

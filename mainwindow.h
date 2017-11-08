@@ -28,6 +28,7 @@ private:
         DRAW_POLYGON,
         SWEEP_LINE,
         CONVEX_HULL,
+        LINE_SEGMENT_INTERSECTION,
         MAX_PRACTICE = 99
     };
     enum Projects_AlgorithmType {

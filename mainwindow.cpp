@@ -9,6 +9,7 @@
 #include "algorithms_practice/ga01_sweepline.h"
 #include "algorithms_practice/ga00_drawpolygon.h"
 #include "algorithms_practice/ga02_convexhull.h"
+#include "algorithms_practice/ga03_linesegmentintersection.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Demonstacija iscrtavanja", QVariant(DRAW_POLYGON));
     ui->algorithmType->addItem("Brisuca prava mini demo", QVariant(SWEEP_LINE));
     ui->algorithmType->addItem("Konveksni omotac", QVariant(CONVEX_HULL));
+    ui->algorithmType->addItem("Preseci duzi", QVariant(LINE_SEGMENT_INTERSECTION));
 
     ui->algorithmType->insertSeparator(MAX_PRACTICE);
 
@@ -84,9 +86,12 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
         case SWEEP_LINE:
             _pAlgorithm = new SweepLine(_renderArea, _delayMs, _filename);
             break;
-    case CONVEX_HULL:
+        case CONVEX_HULL:
             _pAlgorithm = new ConvexHull(_renderArea, _delayMs, _filename);
             break;
+    case LINE_SEGMENT_INTERSECTION:
+        _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
+        break;
     }
 
     if(_pAlgorithm)
