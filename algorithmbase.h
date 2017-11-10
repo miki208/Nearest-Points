@@ -110,7 +110,7 @@ protected:
 
     /* Paarametri za iscrtavanje*/
     QWidget *_pRenderer;
-
+    bool _destroyAnimation;
 
 private:
     ///
@@ -125,7 +125,6 @@ private:
     int _delayMs;
     int _timerId;
     QSemaphore _semaphore;
-    bool _destroyAnimation;
 
     /* Nit koja izvrsava algoritam */
     AnimationThread *_pThread;
