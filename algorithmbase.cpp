@@ -4,7 +4,7 @@
 #include <fstream>
 
 AlgorithmBase::AlgorithmBase(QWidget *pRender, int delayMs)
-    : QObject{}, _pRenderer{pRender}, _delayMs{delayMs}, _timerId{INVALID_TIMER_ID}, _semaphore{0}, _destroyAnimation{false}, _pThread{nullptr}
+    : QObject{}, _pRenderer{pRender}, _destroyAnimation{false}, _delayMs{delayMs}, _timerId{INVALID_TIMER_ID}, _semaphore{0}, _pThread{nullptr}
 {}
 
 void AlgorithmBase::startAnimation()
