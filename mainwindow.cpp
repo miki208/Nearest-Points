@@ -11,6 +11,8 @@
 #include "algorithms_practice/ga02_convexhull.h"
 #include "algorithms_practice/ga03_linesegmentintersection.h"
 
+#include "algorithms_projects/ga03_nearestpoints.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -30,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->algorithmType->addItem("STUDENTSKI PROJEKTI:", QVariant(EMPTY_PROJECTS));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [START]*/
-
+    ui->algorithmType->addItem("Odredjivanje dve najblize tacke u ravni", QVariant(NEAREST_POINTS));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
@@ -89,9 +91,12 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
         case CONVEX_HULL:
             _pAlgorithm = new ConvexHull(_renderArea, _delayMs, _filename);
             break;
-    case LINE_SEGMENT_INTERSECTION:
-        _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
-        break;
+        case LINE_SEGMENT_INTERSECTION:
+            _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
+            break;
+        case NEAREST_POINTS:
+            _pAlgorithm = new NearestPoints(_renderArea, _delayMs);
+            break;
     }
 
     if(_pAlgorithm)

@@ -33,6 +33,7 @@ private:
     };
     enum Projects_AlgorithmType {
         EMPTY_PROJECTS = 100,
+        NEAREST_POINTS,
         /* Ovde se ubacuju enum-i za studentske projekte
          * (nije potrebno navoditi konkretne brojeve)
         */

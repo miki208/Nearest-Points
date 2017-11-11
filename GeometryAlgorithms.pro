@@ -34,7 +34,8 @@ SOURCES += \
     	algorithms_practice/ga01_sweepline.cpp \
         algorithms_practice/ga02_convexhull.cpp \
         algorithms_projects/ga00_emptyproject.cpp \
-    algorithms_practice/ga03_linesegmentintersection.cpp
+    algorithms_practice/ga03_linesegmentintersection.cpp \
+    algorithms_projects/ga03_nearestpoints.cpp
 
 	
 HEADERS += \
@@ -48,7 +49,8 @@ HEADERS += \
         algorithms_projects/ga00_emptyproject.h \
         algorithms_practice/ga02_convexhull.h \
     algorithms_practice/ga03_linesegmentintersection.h \
-    algorithms_practice/ga03_datastructures.h
+    algorithms_practice/ga03_datastructures.h \
+    algorithms_projects/ga03_nearestpoints.h
 
 FORMS += \
         mainwindow.ui
