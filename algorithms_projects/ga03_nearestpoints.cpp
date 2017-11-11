@@ -14,6 +14,8 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
 
     completed = false;
     _middleLines = {};
+    _currentFirst = nullptr;
+    _currentSecond = nullptr;
 }
 
 void NearestPoints::runAlgorithm()
@@ -48,6 +50,10 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
 
     if(_middleLines.size() != 0) {
         drawCurrentSubproblemFrame(painter, pen);
+    }
+
+    if(_currentFirst != nullptr && _currentSecond != nullptr) {
+        drawCurrentlySelectedPoints(painter, pen);
     }
 
     if(completed) {
@@ -115,4 +121,14 @@ void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) con
     //draws vertical line
     changePen(painter, pen, 3);
     painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
+}
+
+void NearestPoints::drawCurrentlySelectedPoints(QPainter &painter, QPen &pen) const
+{
+    changePen(painter, pen, 2);
+    painter.drawLine(*_currentFirst, *_currentSecond);
+
+    changePen(painter, pen, 5, Qt::red);
+    painter.drawPoint(*_currentFirst);
+    painter.drawPoint(*_currentSecond);
 }
