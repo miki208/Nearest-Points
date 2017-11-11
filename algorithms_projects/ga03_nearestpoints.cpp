@@ -1,6 +1,8 @@
 #include "ga03_nearestpoints.h"
 #include "utils.h"
 
+#include <algorithm>
+#include <functional>
 #include <QPainter>
 
 NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename):AlgorithmBase{pRenderer, delayMs}
@@ -11,11 +13,24 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
         _points = readPointsFromFile(filename);
 
     completed = false;
+    _middleLines = {};
 }
 
 void NearestPoints::runAlgorithm()
 {
-    runNaiveAlgorithm();
+    //sort the points by the x axis
+    std::sort(_points.begin(), _points.end(), [](const QPoint &p1, const QPoint &p2) {
+        return p1.x() < p2.x();
+    });
+
+    _pointsCopy = _points;
+
+    AlgorithmBase_updateCanvasAndBlock();
+
+    QPair<QPoint, QPoint> nearestPair;
+    findNearestPoints(0, _points.size(), nearestPair);
+    _nearestPair = nearestPair;
+
     emit animationFinished();
 }
 
@@ -26,13 +41,18 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
     QPen pen = painter.pen();
     pen.setCapStyle(Qt::RoundCap);
 
-    //draw all the points
+    //draws all the points
     changePen(painter, pen, 5);
     for(const QPoint &point : _points)
         painter.drawPoint(point);
 
-    //draw the nearest points
-    drawNearestPair(painter, pen, _nearestPair.first, _nearestPair.second);
+    if(_middleLines.size() != 0) {
+        drawCurrentSubproblemFrame(painter, pen);
+    }
+
+    if(completed) {
+        drawNearestPair(painter, pen, _nearestPair.first, _nearestPair.second);
+    }
 }
 
 void NearestPoints::runNaiveAlgorithm()
@@ -57,6 +77,15 @@ void NearestPoints::runNaiveAlgorithm()
     AlgorithmBase_updateCanvasAndBlock();
 }
 
+void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint> &result)
+{
+    _leftIndex = left;
+    _rightIndex = right;
+    _middleIndex = _leftIndex + (_rightIndex - _leftIndex) / 2;
+    _middleLines.push_back(_points[_middleIndex - 1].x() + (_points[_middleIndex].x() - _points[_middleIndex - 1].x()) / 2);
+    AlgorithmBase_updateCanvasAndBlock();
+}
+
 void NearestPoints::changePen(QPainter &painter, QPen &pen, int width, const QColor &color, Qt::PenStyle style) const
 {
     pen.setWidth(width);
@@ -73,4 +102,17 @@ void NearestPoints::drawNearestPair(QPainter &painter, QPen &pen, const QPoint &
     changePen(painter, pen, 5, Qt::blue);
     painter.drawPoint(p1);
     painter.drawPoint(p2);
+}
+
+void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) const
+{
+    //draws left and right bound
+    changePen(painter, pen, 1, Qt::gray);
+    painter.fillRect(0, 0, _pointsCopy[_leftIndex].x() - 4, _pRenderer->height(), Qt::Dense4Pattern);
+    painter.fillRect(_pointsCopy[_rightIndex - 1].x() + 4, 0,
+            _pRenderer->width() - (_pointsCopy[_rightIndex - 1].x() + 4), _pRenderer->height(), Qt::Dense4Pattern);
+
+    //draws vertical line
+    changePen(painter, pen, 3);
+    painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
 }
