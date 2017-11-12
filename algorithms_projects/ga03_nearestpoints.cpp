@@ -12,30 +12,29 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
     else
         _points = readPointsFromFile(filename);
 
-    _middleLines = {};
     _localNearestPairs = {};
+    _middleLines = {};
     _candidates = {};
+    _distance = -1;
     _currentFirst = nullptr;
     _currentSecond = nullptr;
-    _d = -1;
 }
 
 void NearestPoints::runAlgorithm()
 {
-    //sort the points by the x axis
+    //sortes the points by the x axis O(nlogn)
     std::sort(_points.begin(), _points.end(), [](const QPoint &p1, const QPoint &p2) {
         return p1.x() < p2.x();
     });
 
-    _pointsCopy = _points;
+    _pointsCopy = _points; //make a copy of the sorted points
 
     AlgorithmBase_updateCanvasAndBlock();
 
     QPair<QPoint, QPoint> nearestPair;
-    findNearestPoints(0, _points.size(), nearestPair);
+    findNearestPoints(0, _points.size(), nearestPair); //O(nlogn) - T(N) = 2T(N/2) + cN
     if(_destroyAnimation)
         return;
-    _nearestPair = nearestPair;
 
     AlgorithmBase_updateCanvasAndBlock();
 
@@ -162,16 +161,16 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     double d1 = utils::distance(nearestLeft.first, nearestLeft.second);
     double d2 = utils::distance(nearestRight.first, nearestRight.second);
     if(d1 <= d2) {
-        _d = d1;
+        _distance = d1;
         result = nearestLeft;
     } else {
-        _d = d2;
+        _distance = d2;
         result = nearestRight;
     }
 
     //filter candidates
     for(int i = left; i < right; i++)
-        if(fabs(_middleLines.back() - _points[i].x()) < _d)
+        if(fabs(_middleLines.back() - _points[i].x()) < _distance)
             _candidates.push_back(_points[i]);
 
     //merge solutions
@@ -196,7 +195,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
 
     _localNearestPairs.pop_back();
     _localNearestPairs.pop_back();
-    if(min < _d && min != -1) {
+    if(min < _distance && min != -1) {
         result = tmp1;
     }
     _localNearestPairs.push_back(result);
@@ -205,7 +204,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     AlgorithmBase_updateCanvasAndBlock();
 
 
-    _d = -1;
+    _distance = -1;
     _middleLines.pop_back();
 }
 
@@ -241,10 +240,10 @@ void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) con
         painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
     }
 
-    if(_d != -1) {
+    if(_distance != -1) {
         changePen(painter, pen, 1, Qt::black, Qt::PenStyle::DashLine);
-        painter.drawLine(_middleLines.back() - _d, 0, _middleLines.back() - _d, _pRenderer->height());
-        painter.drawLine(_middleLines.back() + _d, 0, _middleLines.back() + _d, _pRenderer->height());
+        painter.drawLine(_middleLines.back() - _distance, 0, _middleLines.back() - _distance, _pRenderer->height());
+        painter.drawLine(_middleLines.back() + _distance, 0, _middleLines.back() + _distance, _pRenderer->height());
     }
 }
 
