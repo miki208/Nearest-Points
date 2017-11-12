@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <functional>
 #include <QPainter>
+#include <iostream>
 
 NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename):AlgorithmBase{pRenderer, delayMs}
 {
@@ -14,8 +15,11 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
 
     completed = false;
     _middleLines = {};
+    _localNearestPairs = {};
+    _candidates = {};
     _currentFirst = nullptr;
     _currentSecond = nullptr;
+    _d = -1;
 }
 
 void NearestPoints::runAlgorithm()
@@ -31,29 +35,58 @@ void NearestPoints::runAlgorithm()
 
     QPair<QPoint, QPoint> nearestPair;
     findNearestPoints(0, _points.size(), nearestPair);
+    if(_destroyAnimation)
+        return;
     _nearestPair = nearestPair;
 
+    AlgorithmBase_updateCanvasAndBlock();
+
+    std::cout << "Sorted by x" << std::endl;
+    for(QPoint p : _pointsCopy) {
+        std::cout << "(" << p.x() << ", " << p.y() << ") " << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "Sorted by y" << std::endl;
+    for(QPoint p : _points) {
+        std::cout << "(" << p.x() << ", " << p.y() << ") " << " ";
+    }
+    std::cout << std::endl;
     emit animationFinished();
 }
 
 void NearestPoints::drawAlgorithm(QPainter &painter) const
 {
+    int length = (int) _pointsCopy.size();
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QPen pen = painter.pen();
     pen.setCapStyle(Qt::RoundCap);
 
     //draws all the points
-    changePen(painter, pen, 5);
-    for(const QPoint &point : _points)
-        painter.drawPoint(point);
+    for(int i = 0; i < length; i++) {
+        if(i >= _leftIndex && i < _rightIndex)
+            changePen(painter, pen, 5);
+        else
+            changePen(painter, pen, 5, Qt::gray);
+        painter.drawPoint(_pointsCopy[i]);
+    }
 
     if(_middleLines.size() != 0) {
         drawCurrentSubproblemFrame(painter, pen);
     }
 
+    for(const QPair<QPoint, QPoint> &pair : _localNearestPairs) {
+        drawNearestPair(painter, pen, pair.first, pair.second);
+    }
+
     if(_currentFirst != nullptr && _currentSecond != nullptr) {
         drawCurrentlySelectedPoints(painter, pen);
+    }
+
+    //draw candidates
+    changePen(painter, pen, 5, Qt::green);
+    for(const QPoint &point : _candidates) {
+        painter.drawPoint(point);
     }
 
     if(completed) {
@@ -85,11 +118,113 @@ void NearestPoints::runNaiveAlgorithm()
 
 void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint> &result)
 {
+    if(right - left == 2) {
+        _leftIndex = left;
+        _rightIndex = right;
+        merge(left, left + 1, right);
+        result = {_points[left], _points[left + 1]};
+        _localNearestPairs.push_back({result.first, result.second});
+        AlgorithmBase_updateCanvasAndBlock();
+        return;
+    } else if(right - left == 3) {
+        _leftIndex = left;
+        _rightIndex = right;
+        sort3(left);
+
+        double d1 = utils::distance(_points[left], _points[left + 1]);
+        double d2 = utils::distance(_points[left], _points[left + 2]);
+        double d3 = utils::distance(_points[left + 1], _points[left + 2]);
+
+        double m = std::min(std::min(d1, d2), std::min(d2, d3));
+        if(d1 == m) result = {_points[left], _points[left + 1]};
+        else if(d2 == m) result = {_points[left], _points[left + 2]};
+        else result = {_points[left + 1], _points[left + 2]};
+
+        _localNearestPairs.push_back({result.first, result.second});
+        AlgorithmBase_updateCanvasAndBlock();
+        return;
+    }
+
     _leftIndex = left;
     _rightIndex = right;
-    _middleIndex = _leftIndex + (_rightIndex - _leftIndex) / 2;
+    _middleIndex = left + (right - left) / 2;
     _middleLines.push_back(_points[_middleIndex - 1].x() + (_points[_middleIndex].x() - _points[_middleIndex - 1].x()) / 2);
     AlgorithmBase_updateCanvasAndBlock();
+
+    QPair<QPoint, QPoint> nearestLeft;
+    QPair<QPoint, QPoint> nearestRight;
+
+    if(_destroyAnimation)
+        return;
+    findNearestPoints(left, _middleIndex, nearestLeft);
+
+    //restore middle index
+    _middleIndex = left + (right - left) / 2;
+
+    if(_destroyAnimation)
+        return;
+    findNearestPoints(_middleIndex, right, nearestRight);
+
+    if(_destroyAnimation)
+        return;
+
+    //restore left, right, and middle indexes
+    _leftIndex = left;
+    _rightIndex = right;
+    _middleIndex = left + (right - left) / 2;
+
+    merge(_leftIndex, _middleIndex, _rightIndex);
+
+    double d1 = utils::distance(nearestLeft.first, nearestLeft.second);
+    double d2 = utils::distance(nearestRight.first, nearestRight.second);
+    if(d1 <= d2) {
+        _d = d1;
+        result = nearestLeft;
+    } else {
+        _d = d2;
+        result = nearestRight;
+    }
+
+    //filter candidates
+    for(int i = left; i < right; i++)
+        if(fabs(_middleLines.back() - _points[i].x()) < _d)
+            _candidates.push_back(_points[i]);
+
+    //merge solutions
+    double min = -1, tmp;
+    QPair<QPoint, QPoint> tmp1;
+    if(_candidates.size() >= 2) {
+        for(int i = 0; i < _candidates.size() - 1; i++) {
+            _currentFirst = &_candidates[i];
+            for(int j = i + 1; j <= i + 7 && j < _candidates.size(); j++) {
+                _currentSecond = &_candidates[j];
+                AlgorithmBase_updateCanvasAndBlock();
+                tmp = utils::distance(*_currentFirst, *_currentSecond);
+                if(tmp < min || min == -1) {
+                    min = tmp;
+                    tmp1 = {*_currentFirst, *_currentSecond};
+                }
+                _currentSecond = nullptr;
+            }
+            _currentFirst = nullptr;
+        }
+    }
+
+    if(_localNearestPairs.size() >= 2) {
+        _localNearestPairs.pop_back();
+        _localNearestPairs.pop_back();
+
+        if(min < _d && min != -1) {
+            result = tmp1;
+        }
+        _localNearestPairs.push_back(result);
+    }
+
+    AlgorithmBase_updateCanvasAndBlock();
+
+    _candidates = {};
+    _d = -1;
+    _middleLines.pop_back();
 }
 
 void NearestPoints::changePen(QPainter &painter, QPen &pen, int width, const QColor &color, Qt::PenStyle style) const
@@ -118,17 +253,71 @@ void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) con
     painter.fillRect(_pointsCopy[_rightIndex - 1].x() + 4, 0,
             _pRenderer->width() - (_pointsCopy[_rightIndex - 1].x() + 4), _pRenderer->height(), Qt::Dense4Pattern);
 
-    //draws vertical line
-    changePen(painter, pen, 3);
-    painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
+    if(_rightIndex - _leftIndex > 3) {
+        //draws vertical line
+        changePen(painter, pen, 3);
+        painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
+    }
+
+    if(_d != -1) {
+        changePen(painter, pen, 1, Qt::black, Qt::PenStyle::DashLine);
+        painter.drawLine(_middleLines.back() - _d, 0, _middleLines.back() - _d, _pRenderer->height());
+        painter.drawLine(_middleLines.back() + _d, 0, _middleLines.back() + _d, _pRenderer->height());
+    }
 }
 
 void NearestPoints::drawCurrentlySelectedPoints(QPainter &painter, QPen &pen) const
 {
-    changePen(painter, pen, 2);
+    changePen(painter, pen, 2, Qt::green);
     painter.drawLine(*_currentFirst, *_currentSecond);
 
-    changePen(painter, pen, 5, Qt::red);
+    changePen(painter, pen, 5, Qt::green);
     painter.drawPoint(*_currentFirst);
     painter.drawPoint(*_currentSecond);
+}
+
+void NearestPoints::merge(int left, int mid, int right)
+{
+    std::vector<QPoint> l = std::vector<QPoint>(_points.begin() + left, _points.begin() + mid);
+    std::vector<QPoint> r = std::vector<QPoint>(_points.begin() + mid, _points.begin() + right);
+
+    int i = 0;
+    int j = 0;
+    int k = 0;
+
+    while(i < mid - left && j < right - mid) {
+        if(l[i].y() < r[j].y()) {
+            _points[left + k] = l[i];
+            i++;
+        } else {
+            _points[left + k] = r[j];
+            j++;
+        }
+        k++;
+    }
+
+    while(i < mid - left) {
+        _points[left + k] = l[i];
+        i++;
+        k++;
+    }
+
+    while(j < right - mid) {
+        _points[left + k] = r[j];
+        j++;
+        k++;
+    }
+}
+
+void NearestPoints::sort3(int left)
+{
+    for(int i = left; i < left + 3 - 1; i++) {
+        for(int j = i + 1; j < left + 3; j++) {
+            if(_points[i].y() > _points[j].y()) {
+                QPoint tmp = _points[i];
+                _points[i] = _points[j];
+                _points[j] = tmp;
+            }
+        }
+    }
 }
