@@ -49,7 +49,7 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
     QPen pen = painter.pen();
     pen.setCapStyle(Qt::RoundCap);
 
-    //draws all the points
+    //draws all the points (points outside the frame are painted in gray)
     for(int i = 0; i < length; i++) {
         if(i >= _leftIndex && i < _rightIndex)
             changePen(painter, pen, 5);
@@ -58,19 +58,22 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
         painter.drawPoint(_pointsCopy[i]);
     }
 
+    //draw current frame
     if(_middleLines.size() != 0) {
         drawCurrentSubproblemFrame(painter, pen);
     }
 
+    //draw local solutions
     for(const QPair<QPoint, QPoint> &pair : _localNearestPairs) {
         drawNearestPair(painter, pen, pair.first, pair.second);
     }
 
+    //draw selected points and their segment line (if they exist)
     if(_currentFirst != nullptr && _currentSecond != nullptr) {
         drawCurrentlySelectedPoints(painter, pen);
     }
 
-    //draw candidates
+    //paint the candidates with a new color
     changePen(painter, pen, 5, Qt::green);
     for(const QPoint &point : _candidates) {
         painter.drawPoint(point);
@@ -199,62 +202,13 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         result = tmp1;
     }
     _localNearestPairs.push_back(result);
+
     _candidates = {};
 
     AlgorithmBase_updateCanvasAndBlock();
 
-
     _distance = -1;
     _middleLines.pop_back();
-}
-
-void NearestPoints::changePen(QPainter &painter, QPen &pen, int width, const QColor &color, Qt::PenStyle style) const
-{
-    pen.setWidth(width);
-    pen.setColor(color);
-    pen.setStyle(style);
-    painter.setPen(pen);
-}
-
-void NearestPoints::drawNearestPair(QPainter &painter, QPen &pen, const QPoint &p1, const QPoint &p2) const
-{
-    changePen(painter, pen, 2, Qt::red);
-    painter.drawLine(p1, p2);
-
-    changePen(painter, pen, 5, Qt::blue);
-    painter.drawPoint(p1);
-    painter.drawPoint(p2);
-}
-
-void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) const
-{
-    //draws left and right bound
-    changePen(painter, pen, 1, Qt::gray);
-    painter.fillRect(0, 0, _pointsCopy[_leftIndex].x() - 4, _pRenderer->height(), Qt::Dense4Pattern);
-    painter.fillRect(_pointsCopy[_rightIndex - 1].x() + 4, 0,
-            _pRenderer->width() - (_pointsCopy[_rightIndex - 1].x() + 4), _pRenderer->height(), Qt::Dense4Pattern);
-
-    if(_rightIndex - _leftIndex > 3) {
-        //draws vertical line
-        changePen(painter, pen, 3);
-        painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
-    }
-
-    if(_distance != -1) {
-        changePen(painter, pen, 1, Qt::black, Qt::PenStyle::DashLine);
-        painter.drawLine(_middleLines.back() - _distance, 0, _middleLines.back() - _distance, _pRenderer->height());
-        painter.drawLine(_middleLines.back() + _distance, 0, _middleLines.back() + _distance, _pRenderer->height());
-    }
-}
-
-void NearestPoints::drawCurrentlySelectedPoints(QPainter &painter, QPen &pen) const
-{
-    changePen(painter, pen, 2, Qt::yellow);
-    painter.drawLine(*_currentFirst, *_currentSecond);
-
-    changePen(painter, pen, 5, Qt::yellow);
-    painter.drawPoint(*_currentFirst);
-    painter.drawPoint(*_currentSecond);
 }
 
 void NearestPoints::merge(int left, int mid, int right)
@@ -301,4 +255,58 @@ void NearestPoints::sort3(int left)
             }
         }
     }
+}
+
+/*
+ * Helper methods for drawing
+ */
+
+void NearestPoints::changePen(QPainter &painter, QPen &pen, int width, const QColor &color, Qt::PenStyle style) const
+{
+    pen.setWidth(width);
+    pen.setColor(color);
+    pen.setStyle(style);
+    painter.setPen(pen);
+}
+
+void NearestPoints::drawNearestPair(QPainter &painter, QPen &pen, const QPoint &p1, const QPoint &p2) const
+{
+    changePen(painter, pen, 2, Qt::red);
+    painter.drawLine(p1, p2);
+
+    changePen(painter, pen, 5, Qt::blue);
+    painter.drawPoint(p1);
+    painter.drawPoint(p2);
+}
+
+void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) const
+{
+    //draws left and right bound
+    changePen(painter, pen, 1, Qt::gray);
+    painter.fillRect(0, 0, _pointsCopy[_leftIndex].x() - 4, _pRenderer->height(), Qt::Dense4Pattern);
+    painter.fillRect(_pointsCopy[_rightIndex - 1].x() + 4, 0,
+            _pRenderer->width() - (_pointsCopy[_rightIndex - 1].x() + 4), _pRenderer->height(), Qt::Dense4Pattern);
+
+    if(_rightIndex - _leftIndex > 3) {
+        //draws vertical line
+        changePen(painter, pen, 3);
+        painter.drawLine(_middleLines.back(), 0, _middleLines.back(), _pRenderer->height());
+    }
+
+    if(_distance != -1) {
+        //draws two striped lines for the candidates
+        changePen(painter, pen, 1, Qt::black, Qt::PenStyle::DashLine);
+        painter.drawLine(_middleLines.back() - _distance, 0, _middleLines.back() - _distance, _pRenderer->height());
+        painter.drawLine(_middleLines.back() + _distance, 0, _middleLines.back() + _distance, _pRenderer->height());
+    }
+}
+
+void NearestPoints::drawCurrentlySelectedPoints(QPainter &painter, QPen &pen) const
+{
+    changePen(painter, pen, 2, Qt::yellow);
+    painter.drawLine(*_currentFirst, *_currentSecond);
+
+    changePen(painter, pen, 5, Qt::green);
+    painter.drawPoint(*_currentFirst);
+    painter.drawPoint(*_currentSecond);
 }
