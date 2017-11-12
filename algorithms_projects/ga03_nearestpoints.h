@@ -57,7 +57,7 @@ private:
      */
     void merge(int left, int mid, int right);
 
-    /* Sorts three points in array starting from index left (array[left:left + 3])
+    /* Sortes three points in array starting from index left (array[left:left + 3])
      *  left    - left index of array (included)
      */
     void sort3(int left);
