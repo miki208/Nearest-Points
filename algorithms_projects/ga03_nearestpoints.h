@@ -29,7 +29,6 @@ private:
     std::vector<QPoint> _candidates;
     double _d;
     QPoint *_currentFirst, *_currentSecond; //currently selected points
-    bool completed; //indicator of whether the algorithm is completed
     int _leftIndex, _rightIndex, _middleIndex;
 };
 

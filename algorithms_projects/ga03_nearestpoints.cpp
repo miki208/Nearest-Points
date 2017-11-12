@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <functional>
 #include <QPainter>
-#include <iostream>
 
 NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename):AlgorithmBase{pRenderer, delayMs}
 {
@@ -13,7 +12,6 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
     else
         _points = readPointsFromFile(filename);
 
-    completed = false;
     _middleLines = {};
     _localNearestPairs = {};
     _candidates = {};
@@ -41,16 +39,6 @@ void NearestPoints::runAlgorithm()
 
     AlgorithmBase_updateCanvasAndBlock();
 
-    std::cout << "Sorted by x" << std::endl;
-    for(QPoint p : _pointsCopy) {
-        std::cout << "(" << p.x() << ", " << p.y() << ") " << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "Sorted by y" << std::endl;
-    for(QPoint p : _points) {
-        std::cout << "(" << p.x() << ", " << p.y() << ") " << " ";
-    }
-    std::cout << std::endl;
     emit animationFinished();
 }
 
@@ -87,10 +75,6 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
     changePen(painter, pen, 5, Qt::green);
     for(const QPoint &point : _candidates) {
         painter.drawPoint(point);
-    }
-
-    if(completed) {
-        drawNearestPair(painter, pen, _nearestPair.first, _nearestPair.second);
     }
 }
 
@@ -210,19 +194,17 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         }
     }
 
-    if(_localNearestPairs.size() >= 2) {
-        _localNearestPairs.pop_back();
-        _localNearestPairs.pop_back();
-
-        if(min < _d && min != -1) {
-            result = tmp1;
-        }
-        _localNearestPairs.push_back(result);
+    _localNearestPairs.pop_back();
+    _localNearestPairs.pop_back();
+    if(min < _d && min != -1) {
+        result = tmp1;
     }
+    _localNearestPairs.push_back(result);
+    _candidates = {};
 
     AlgorithmBase_updateCanvasAndBlock();
 
-    _candidates = {};
+
     _d = -1;
     _middleLines.pop_back();
 }
@@ -268,10 +250,10 @@ void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) con
 
 void NearestPoints::drawCurrentlySelectedPoints(QPainter &painter, QPen &pen) const
 {
-    changePen(painter, pen, 2, Qt::green);
+    changePen(painter, pen, 2, Qt::yellow);
     painter.drawLine(*_currentFirst, *_currentSecond);
 
-    changePen(painter, pen, 5, Qt::green);
+    changePen(painter, pen, 5, Qt::yellow);
     painter.drawPoint(*_currentFirst);
     painter.drawPoint(*_currentSecond);
 }
