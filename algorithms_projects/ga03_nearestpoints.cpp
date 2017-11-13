@@ -22,7 +22,7 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
 
 void NearestPoints::runAlgorithm()
 {
-    //sortes the points by the x axis O(nlogn)
+    //sorts the points by the x axis O(nlogn)
     std::sort(_points.begin(), _points.end(), [](const QPoint &p1, const QPoint &p2) {
         return p1.x() < p2.x();
     });
