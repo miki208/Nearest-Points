@@ -294,10 +294,22 @@ void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) con
     }
 
     if(_distance != -1) {
+        double leftPoint = _middleLines.back() - _distance;
+        double rightPoint = _middleLines.back() + _distance;
+
         //draws two striped lines for the candidates
         changePen(painter, pen, 1, Qt::black, Qt::PenStyle::DashLine);
-        painter.drawLine(_middleLines.back() - _distance, 0, _middleLines.back() - _distance, _pRenderer->height());
-        painter.drawLine(_middleLines.back() + _distance, 0, _middleLines.back() + _distance, _pRenderer->height());
+        painter.drawLine(leftPoint, 0, leftPoint, _pRenderer->height());
+        painter.drawLine(rightPoint, 0, rightPoint, _pRenderer->height());
+
+        //draw distance arrow line
+        painter.drawLine(leftPoint, _pRenderer->height() - 50, rightPoint, _pRenderer->height() - 50);
+        changePen(painter, pen, 1, Qt::black);
+        painter.drawLine(leftPoint, _pRenderer->height() - 50, leftPoint + 5, _pRenderer->height() - 50 + 2);
+        painter.drawLine(leftPoint, _pRenderer->height() - 50, leftPoint + 5, _pRenderer->height() - 50 - 2);
+        painter.drawLine(rightPoint, _pRenderer->height() - 50, rightPoint - 5, _pRenderer->height() - 50 + 2);
+        painter.drawLine(rightPoint, _pRenderer->height() - 50, rightPoint - 5, _pRenderer->height() - 50 - 2);
+        changePen(painter, pen, 1, Qt::red);
     }
 }
 
