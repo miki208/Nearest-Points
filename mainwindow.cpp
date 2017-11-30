@@ -95,7 +95,7 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
             break;
         case NEAREST_POINTS:
-            _pAlgorithm = new NearestPoints(_renderArea, _delayMs);
+            _pAlgorithm = new NearestPoints(_renderArea, _delayMs, _filename);
             break;
     }
 
