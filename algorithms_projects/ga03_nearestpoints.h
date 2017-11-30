@@ -64,6 +64,7 @@ private:
 
     int _leftIndex, _rightIndex, _middleIndex; //left, right and middle indices of the current frame
     double _distance; //the minimum distance of the left and right subproblems
+    QString _distanceLineLabel;
     std::vector<int> _middleLines; //vertical lines that split the plane into two parts (into two subproblems)
     std::vector<QPoint> _points;
     std::vector<QPoint> _pointsCopy; //a copy of the points (necessary to preserve order, according to the x axis)
