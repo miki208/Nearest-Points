@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <functional>
 #include <QPainter>
+#include <QVector2D>
 
 NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename):AlgorithmBase{pRenderer, delayMs}
 {
@@ -65,6 +66,7 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
 
     //draw local solutions
     for(const QPair<QPoint, QPoint> &pair : _localNearestPairs) {
+        //draws a text label next to the line segment, if the segment is in the current frame
         drawNearestPair(painter, pen, pair.first, pair.second);
     }
 
@@ -77,6 +79,16 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
     changePen(painter, pen, 5, Qt::green);
     for(const QPoint &point : _candidates) {
         painter.drawPoint(point);
+    }
+
+    //draws d1 and d2
+    if(_distance != -1) {
+        unsigned lNPLen = _localNearestPairs.size();
+        QLine d2 = QLine(_localNearestPairs[lNPLen - 1].first, _localNearestPairs[lNPLen - 1].second);
+        QLine d1 = QLine(_localNearestPairs[lNPLen - 2].first, _localNearestPairs[lNPLen - 2].second);
+        changePen(painter, pen, 1, Qt::blue);
+        painter.drawText(d1.center(), "d1");
+        painter.drawText(d2.center(), "d2");
     }
 }
 
@@ -166,9 +178,11 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     if(d1 <= d2) {
         _distance = d1;
         result = nearestLeft;
+        _distanceLineLabel = "d1";
     } else {
         _distance = d2;
         result = nearestRight;
+        _distanceLineLabel = "d2";
     }
 
     //filter candidates
@@ -196,18 +210,28 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         }
     }
 
-    _localNearestPairs.pop_back();
-    _localNearestPairs.pop_back();
+    _candidates = {};
+
+    if(min != -1) {
+        _localNearestPairs.insert(_localNearestPairs.begin(), tmp1);
+        AlgorithmBase_updateCanvasAndBlock();
+        _localNearestPairs.erase(_localNearestPairs.begin());
+    } else {
+        AlgorithmBase_updateCanvasAndBlock();
+    }
+
     if(min < _distance && min != -1) {
         result = tmp1;
     }
+
+    _localNearestPairs.pop_back();
+    _localNearestPairs.pop_back();
     _localNearestPairs.push_back(result);
 
-    _candidates = {};
+    _distance = -1;
 
     AlgorithmBase_updateCanvasAndBlock();
 
-    _distance = -1;
     _middleLines.pop_back();
 }
 
@@ -294,28 +318,39 @@ void NearestPoints::drawCurrentSubproblemFrame(QPainter &painter, QPen &pen) con
     }
 
     if(_distance != -1) {
+        QLine firstHalf, secondHalf;
         double leftPoint = _middleLines.back() - _distance;
         double rightPoint = _middleLines.back() + _distance;
+
+        firstHalf = QLine(leftPoint, _pRenderer->height() - 50, _middleLines.back(), _pRenderer->height() - 50);
+        secondHalf = QLine(_middleLines.back(), _pRenderer->height() - 50, rightPoint, _pRenderer->height() - 50);
 
         //draws two striped lines for the candidates
         changePen(painter, pen, 1, Qt::black, Qt::PenStyle::DashLine);
         painter.drawLine(leftPoint, 0, leftPoint, _pRenderer->height());
         painter.drawLine(rightPoint, 0, rightPoint, _pRenderer->height());
 
-        //draw distance arrow line
-        painter.drawLine(leftPoint, _pRenderer->height() - 50, rightPoint, _pRenderer->height() - 50);
+        //draws distance arrow lines
+        painter.drawLine(firstHalf);
+        painter.drawText(QPoint(firstHalf.center().x(), firstHalf.center().y() - 2), _distanceLineLabel);
+        painter.drawLine(secondHalf);
+        painter.drawText(QPoint(secondHalf.center().x(), secondHalf.center().y() - 2), _distanceLineLabel);
+
         changePen(painter, pen, 1, Qt::black);
-        painter.drawLine(leftPoint, _pRenderer->height() - 50, leftPoint + 5, _pRenderer->height() - 50 + 2);
-        painter.drawLine(leftPoint, _pRenderer->height() - 50, leftPoint + 5, _pRenderer->height() - 50 - 2);
-        painter.drawLine(rightPoint, _pRenderer->height() - 50, rightPoint - 5, _pRenderer->height() - 50 + 2);
-        painter.drawLine(rightPoint, _pRenderer->height() - 50, rightPoint - 5, _pRenderer->height() - 50 - 2);
-        changePen(painter, pen, 1, Qt::red);
+        painter.drawLine(firstHalf.p1(), QPoint(firstHalf.p1().x() + 5, firstHalf.p1().y() + 2));
+        painter.drawLine(firstHalf.p1(), QPoint(firstHalf.p1().x() + 5, firstHalf.p1().y() - 2));
+        painter.drawLine(firstHalf.p2(), QPoint(firstHalf.p2().x() - 5, firstHalf.p2().y() + 2));
+        painter.drawLine(firstHalf.p2(), QPoint(firstHalf.p2().x() - 5, firstHalf.p2().y() - 2));
+        painter.drawLine(secondHalf.p1(), QPoint(secondHalf.p1().x() + 5, secondHalf.p1().y() + 2));
+        painter.drawLine(secondHalf.p1(), QPoint(secondHalf.p1().x() + 5, secondHalf.p1().y() - 2));
+        painter.drawLine(secondHalf.p2(), QPoint(secondHalf.p2().x() - 5, secondHalf.p2().y() + 2));
+        painter.drawLine(secondHalf.p2(), QPoint(secondHalf.p2().x() - 5, secondHalf.p2().y() - 2));
     }
 }
 
 void NearestPoints::drawCurrentlySelectedPoints(QPainter &painter, QPen &pen) const
 {
-    changePen(painter, pen, 2, Qt::yellow);
+    changePen(painter, pen, 2, Qt::green);
     painter.drawLine(*_currentFirst, *_currentSecond);
 
     changePen(painter, pen, 5, Qt::green);
