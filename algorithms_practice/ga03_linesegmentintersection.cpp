@@ -2,10 +2,10 @@
 #include <iostream>
 #include<QPainter>
 
-LineSegmentIntersection::LineSegmentIntersection(QWidget *pRenderer, int delayMs, std::string filename)
+LineSegmentIntersection::LineSegmentIntersection(QWidget *pRenderer, int delayMs, std::string filename, int dimension)
     :AlgorithmBase (pRenderer, delayMs), _eventQueue(), _statusQueue(StatusQueueComp(&_sweepLineY)), _intersections()
 {
-    _lineSegments = generateRandomLines(15);
+    _lineSegments = generateRandomLines(dimension);
     _sweepLineY = 0;
 
     //Dodavanje svih tacaka u eventQueue
@@ -203,6 +203,9 @@ void LineSegmentIntersection::runNaiveAlgorithm()
 
 void LineSegmentIntersection::deleteFromStatus(QLineF *l)
 {
+//    _sweepLineY += 0.5;
+//    _statusQueue.erase(l);
+//    _sweepLineY -= 0.5;
     for(auto it = _statusQueue.begin(); it != _statusQueue.end(); ++it)
     {
         if(*it == l)

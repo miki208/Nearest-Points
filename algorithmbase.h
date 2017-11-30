@@ -28,7 +28,11 @@
 #include <vector>
 
 #define AlgorithmBase_updateCanvasAndBlock() \
-    if (updateCanvasAndBlock()) \
+    if(!_pThread) \
+    { \
+       ; \
+    } \
+    else if (updateCanvasAndBlock()) \
     { \
         return; \
     }
@@ -112,6 +116,8 @@ protected:
     QWidget *_pRenderer;
     bool _destroyAnimation;
 
+    /* Nit koja izvrsava algoritam */
+    AnimationThread *_pThread;
 private:
     ///
     /// \brief timerEvent - funkcija koja se poziva na svakih _delayMs ms.
@@ -125,9 +131,6 @@ private:
     int _delayMs;
     int _timerId;
     QSemaphore _semaphore;
-
-    /* Nit koja izvrsava algoritam */
-    AnimationThread *_pThread;
 };
 
 #endif // ALGORITHMBASE_H

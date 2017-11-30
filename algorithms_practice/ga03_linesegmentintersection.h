@@ -10,7 +10,7 @@
 class LineSegmentIntersection : public AlgorithmBase
 {
 public:
-    LineSegmentIntersection(QWidget *pRenderer, int delayMs, std::string filename = "");
+    LineSegmentIntersection(QWidget *pRenderer, int delayMs, std::string filename = "", int dimension = 15);
 
     // AlgorithmBase interface
 public:

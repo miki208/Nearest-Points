@@ -4,6 +4,12 @@
 #include <QMainWindow>
 #include <QBoxLayout>
 
+#include "timemeasurementthread.h"
+
+/*QChart*/
+#include <QtCharts/QLineSeries>
+QT_CHARTS_USE_NAMESPACE
+
 #include "renderarea.h"
 
 namespace Ui {
@@ -17,11 +23,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-private:
-    void animationButtonsSetEnabled(bool value);
-    void algorithmOptionsSetEnabled(bool value);
-    void makeNewAlgotirhm(std::string filename = "");
 
     enum Practice_AlgorithmType {
         EMPTY_PRACTICE = 0,
@@ -39,6 +40,10 @@ private:
         */
         MAX_PROJECTS = 199
     };
+private:
+    void animationButtonsSetEnabled(bool value);
+    void algorithmOptionsSetEnabled(bool value);
+    void makeNewAlgotirhm(std::string filename = "");
 
 private slots:
     void on_algorithmType_currentIndexChanged(int index);
@@ -50,6 +55,9 @@ private slots:
     void on_next_clicked();
     void on_restart_clicked();
 
+    void on_startMeasurement_clicked();
+    void on_lineSeriesChange(double dim, double optimal, double naive);
+
 public slots:
     void on_animationFinished();
 
@@ -59,6 +67,11 @@ private:
     AlgorithmBase* _pAlgorithm;
     int _delayMs;
     std::string _filename;
+
+    QLineSeries* _naiveSeries;
+    QLineSeries* _optimalSeries;
+
+    TimeMeasurementThread* _mThread;
 };
 
 #endif // MAINWINDOW_H

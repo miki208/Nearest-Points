@@ -74,8 +74,20 @@ std::vector<QPoint> AlgorithmBase::generateRandomPoints(int pointsNum)
 {
     srand(static_cast<unsigned>(time(0)));
 
-    int xMax = _pRenderer->width()-DRAWING_BORDER;
-    int yMax = _pRenderer->height() - DRAWING_BORDER;
+    int width, height;
+    if(this->_pRenderer)
+    {
+        width = _pRenderer->width();
+        height = _pRenderer->height();
+    }
+    else
+    {
+        width = 1200;
+        height = 500;
+    }
+
+    int xMax = width - DRAWING_BORDER;
+    int yMax = height  - DRAWING_BORDER;
 
     int xMin = DRAWING_BORDER;
     int yMin = DRAWING_BORDER;
@@ -106,8 +118,8 @@ std::vector<QLineF> AlgorithmBase::generateRandomLines(int linesNum)
 {
     srand(static_cast<unsigned>(time(0)));
 
-    int xMax = _pRenderer->width()-DRAWING_BORDER;
-    int yMax = _pRenderer->height() - DRAWING_BORDER;
+    int xMax = 1200 -DRAWING_BORDER;
+    int yMax = 500 - DRAWING_BORDER;
 
     int xMin = DRAWING_BORDER;
     int yMin = DRAWING_BORDER;

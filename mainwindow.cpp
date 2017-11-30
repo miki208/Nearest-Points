@@ -5,6 +5,12 @@
 #include <iostream>
 #include <fstream>
 
+/*QChart*/
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+
+QT_CHARTS_USE_NAMESPACE
+
 #include "algorithmbase.h"
 #include "algorithms_practice/ga01_sweepline.h"
 #include "algorithms_practice/ga00_drawpolygon.h"
@@ -12,6 +18,7 @@
 #include "algorithms_practice/ga03_linesegmentintersection.h"
 
 #include "algorithms_projects/ga03_nearestpoints.h"
+#include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -43,6 +50,43 @@ MainWindow::MainWindow(QWidget *parent) :
     _renderArea = new RenderArea(this);
     renderBoxLayout->addWidget(_renderArea);
     ui->tab->setLayout(renderBoxLayout);
+
+    /* Add chart */
+    _optimalSeries = new QLineSeries();
+    _naiveSeries = new QLineSeries();
+
+    QChart *chart = new QChart();
+    _optimalSeries->append(0,0);
+    _naiveSeries->append(0,0);
+
+    _optimalSeries->setName("Optimalni algoritam");
+    _naiveSeries->setName("Naivni algoritam");
+
+    chart->addSeries(_optimalSeries);
+    chart->addSeries(_naiveSeries);
+
+    chart->legend()->show();
+
+    chart->createDefaultAxes();
+    chart->setTitle("Poredjenje efikasnosti");
+
+    if(chart->axisX())
+        chart->axisX()->setRange(0, X_MAX_VAL);
+
+    if(chart->axisY())
+        chart->axisY()->setRange(0, Y_MAX_VAL);
+
+    // Same formatting
+    chart->setBackgroundVisible(false);
+    chart->setPlotAreaBackgroundVisible(true);
+
+    QChartView *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    QBoxLayout* chartBoxLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    chartBoxLayout->addWidget(chartView);
+
+    ui->tab_3->setLayout(chartBoxLayout);
 
     animationButtonsSetEnabled(false);
 }
@@ -187,4 +231,21 @@ void MainWindow::on_animationFinished()
     ui->clean->setEnabled(true);
     animationButtonsSetEnabled(false);
     ui->restart->setEnabled(true);
+}
+
+void MainWindow::on_lineSeriesChange(double dim, double optimal, double naive)
+{
+
+    _optimalSeries->append(dim, optimal);
+    _naiveSeries->append(dim, naive);
+}
+
+void MainWindow::on_startMeasurement_clicked()
+{
+    int currentIndex = ui->algorithmType->currentIndex();
+    int currentAlgorithm = ui->algorithmType->itemData(currentIndex).toInt();
+
+    _mThread = new TimeMeasurementThread(currentAlgorithm, MIN_DIM, STEP, MAX_DIM);
+    connect(_mThread, &TimeMeasurementThread::updateChart, this, &MainWindow::on_lineSeriesChange);
+    _mThread->start();
 }
