@@ -196,7 +196,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     if(_candidates.size() >= 2) {
         for(int i = 0; i < _candidates.size() - 1; i++) {
             _currentFirst = &_candidates[i];
-            for(int j = i + 1; j <= i + 7 && j < _candidates.size(); j++) {
+            for(int j = i + 1; j < _candidates.size() && _candidates[j].y() - _candidates[i].y() < _distance; j++) {
                 _currentSecond = &_candidates[j];
                 AlgorithmBase_updateCanvasAndBlock();
                 tmp = utils::distance(*_currentFirst, *_currentSecond);
