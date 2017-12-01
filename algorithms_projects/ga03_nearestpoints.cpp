@@ -2,9 +2,7 @@
 #include "utils.h"
 
 #include <algorithm>
-#include <functional>
 #include <QPainter>
-#include <QVector2D>
 
 NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename):AlgorithmBase{pRenderer, delayMs}
 {
@@ -28,7 +26,7 @@ void NearestPoints::runAlgorithm()
         return p1.x() < p2.x();
     });
 
-    _pointsCopy = _points; //make a copy of the sorted points
+    _pointsCopy = _points; //makes a copy of the sorted points
 
     AlgorithmBase_updateCanvasAndBlock();
 
@@ -59,23 +57,23 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
         painter.drawPoint(_pointsCopy[i]);
     }
 
-    //draw current frame
+    //draws current frame
     if(_middleLines.size() != 0) {
         drawCurrentSubproblemFrame(painter, pen);
     }
 
-    //draw local solutions
+    //draws local solutions
     for(const QPair<QPoint, QPoint> &pair : _localNearestPairs) {
         //draws a text label next to the line segment, if the segment is in the current frame
         drawNearestPair(painter, pen, pair.first, pair.second);
     }
 
-    //draw selected points and their segment line (if they exist)
+    //draws selected points and their segment line (if they exist)
     if(_currentFirst != nullptr && _currentSecond != nullptr) {
         drawCurrentlySelectedPoints(painter, pen);
     }
 
-    //paint the candidates with a new color
+    //paints the candidates with a new color
     changePen(painter, pen, 5, Qt::green);
     for(const QPoint &point : _candidates) {
         painter.drawPoint(point);
@@ -156,7 +154,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         return;
     findNearestPoints(left, _middleIndex, nearestLeft);
 
-    //restore middle index
+    //restores middle index
     _middleIndex = left + (right - left) / 2;
 
     if(_destroyAnimation)
@@ -166,7 +164,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     if(_destroyAnimation)
         return;
 
-    //restore left, right, and middle indexes
+    //restores left, right, and middle indexes
     _leftIndex = left;
     _rightIndex = right;
     _middleIndex = left + (right - left) / 2;
@@ -185,12 +183,12 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         _distanceLineLabel = "d2";
     }
 
-    //filter candidates
+    //filters candidates
     for(int i = left; i < right; i++)
         if(fabs(_middleLines.back() - _points[i].x()) < _distance)
             _candidates.push_back(_points[i]);
 
-    //merge solutions
+    //merges solutions
     double min = -1, tmp;
     QPair<QPoint, QPoint> tmp1;
     if(_candidates.size() >= 2) {
