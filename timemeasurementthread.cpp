@@ -42,7 +42,7 @@ void TimeMeasurementThread::run()
                 pAlgorithm = new LineSegmentIntersection(nullptr, 0, "", i);
                 break;
             case MainWindow::NEAREST_POINTS:
-                pAlgorithm = new NearestPoints(nullptr, 0, "", i);
+                //pAlgorithm = new NearestPoints(nullptr, 0, "", i);
                 break;
         }
 

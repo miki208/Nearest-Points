@@ -10,10 +10,15 @@ EmptyProject::EmptyProject(QWidget *pRenderer, int delayMs)
 
 void EmptyProject::runAlgorithm()
 {
-
+    emit animationFinished();
 }
 
 void EmptyProject::drawAlgorithm(QPainter &painter) const
+{
+    (void)painter;
+}
+
+void EmptyProject::runNaiveAlgorithm()
 {
 
 }

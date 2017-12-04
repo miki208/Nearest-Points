@@ -5,6 +5,7 @@
 LineSegmentIntersection::LineSegmentIntersection(QWidget *pRenderer, int delayMs, std::string filename, int dimension)
     :AlgorithmBase (pRenderer, delayMs), _eventQueue(), _statusQueue(StatusQueueComp(&_sweepLineY)), _intersections()
 {
+    (void)filename;
     _lineSegments = generateRandomLines(dimension);
     _sweepLineY = 0;
 

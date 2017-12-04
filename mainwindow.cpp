@@ -16,6 +16,7 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithms_practice/ga00_drawpolygon.h"
 #include "algorithms_practice/ga02_convexhull.h"
 #include "algorithms_practice/ga03_linesegmentintersection.h"
+#include "algorithms_practice/ga04_dceldemo.h"
 
 #include "algorithms_projects/ga03_nearestpoints.h"
 #include "config.h"
@@ -34,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Brisuca prava mini demo", QVariant(SWEEP_LINE));
     ui->algorithmType->addItem("Konveksni omotac", QVariant(CONVEX_HULL));
     ui->algorithmType->addItem("Preseci duzi", QVariant(LINE_SEGMENT_INTERSECTION));
+    ui->algorithmType->addItem("DCEL Demo", QVariant(DCEL_DEMO));
 
     ui->algorithmType->insertSeparator(MAX_PRACTICE);
 
@@ -137,6 +139,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             break;
         case LINE_SEGMENT_INTERSECTION:
             _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
+            break;
+        case DCEL_DEMO:
+            _pAlgorithm = new DCELDemo(_renderArea, _delayMs, filename);
             break;
         case NEAREST_POINTS:
             _pAlgorithm = new NearestPoints(_renderArea, _delayMs, _filename);

@@ -12,6 +12,7 @@ public:
 public:
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
+    void runNaiveAlgorithm();
 };
 
 #endif // GA00_EMPTYPROJECT_H

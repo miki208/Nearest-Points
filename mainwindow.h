@@ -30,6 +30,7 @@ public:
         SWEEP_LINE,
         CONVEX_HULL,
         LINE_SEGMENT_INTERSECTION,
+        DCEL_DEMO,
         MAX_PRACTICE = 99
     };
     enum Projects_AlgorithmType {
