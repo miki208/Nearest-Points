@@ -1,8 +1,6 @@
 #include "ga04_dceldemo.h"
 #include "ga04_dcel.h"
 
-#include<QPainter>
-
 DCELDemo::DCELDemo(QWidget *pRenderer, int delayMs, std::string filename)
     : AlgorithmBase (pRenderer, delayMs), _polygon(filename)
 {

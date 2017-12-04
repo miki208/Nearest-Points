@@ -1,6 +1,5 @@
 #include "ga02_convexhull.h"
 
-#include <QPainter>
 #include <functional>
 
 #include "utils.h"

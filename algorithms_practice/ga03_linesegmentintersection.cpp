@@ -1,6 +1,5 @@
 #include "ga03_linesegmentintersection.h"
 #include <iostream>
-#include<QPainter>
 
 LineSegmentIntersection::LineSegmentIntersection(QWidget *pRenderer, int delayMs, std::string filename, int dimension)
     :AlgorithmBase (pRenderer, delayMs), _eventQueue(), _statusQueue(StatusQueueComp(&_sweepLineY)), _intersections()

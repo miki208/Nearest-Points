@@ -1,7 +1,5 @@
 #include "ga00_drawpolygon.h"
 
-#include <QPainter>
-
 DrawPolygon::DrawPolygon(QWidget *pRenderer, int delayMs, std::string filename)
     :AlgorithmBase{pRenderer, delayMs}, _n(0)
 {

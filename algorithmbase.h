@@ -25,6 +25,9 @@
 #include <QSemaphore>
 #include <QWidget>
 
+#include <QPen>
+#include <QPainter>
+
 #include <vector>
 
 #define AlgorithmBase_updateCanvasAndBlock() \

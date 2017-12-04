@@ -31,6 +31,7 @@ public:
         CONVEX_HULL,
         LINE_SEGMENT_INTERSECTION,
         DCEL_DEMO,
+        TRIANGULATION,
         MAX_PRACTICE = 99
     };
     enum Projects_AlgorithmType {

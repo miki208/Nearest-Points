@@ -1,7 +1,5 @@
 #include "ga01_sweepline.h"
 
-#include <QPainter>
-
 SweepLine::SweepLine(QWidget *pRenderer, int delayMs, std::string filename)
     :AlgorithmBase{pRenderer, delayMs}, _yPos{0}
 {
