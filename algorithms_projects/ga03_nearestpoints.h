@@ -6,7 +6,7 @@
 class NearestPoints : public AlgorithmBase
 {
 public:
-    NearestPoints(QWidget* pRenderer, int delayMs, std::string filename = "");
+    NearestPoints(QWidget* pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
 
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;

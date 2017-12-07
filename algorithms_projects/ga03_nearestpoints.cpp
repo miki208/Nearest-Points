@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <QPainter>
 
-NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename):AlgorithmBase{pRenderer, delayMs}
+NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filename, int inputSize):AlgorithmBase{pRenderer, delayMs}
 {
     if(filename == "")
-        _points = generateRandomPoints();
+        _points = generateRandomPoints(inputSize);
     else
         _points = readPointsFromFile(filename);
 
