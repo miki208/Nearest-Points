@@ -180,7 +180,7 @@ void MainWindow::on_algorithmType_currentIndexChanged(int index)
 void MainWindow::on_importDataFromFile_clicked()
 {
     //QString fileName = QFileDialog::getOpenFileName(this, tr("Fajl koji sadrzi koordinate tacaka"), ".", "*.*");
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Fajl koji sadrzi koordinate tacaka"), "../GeometryAlgorithms/inputs", "*.*");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Fajl koji sadrzi koordinate tacaka"), "../algorithms/input_files", "*.*");
     if(fileName.isEmpty())
         return;
 

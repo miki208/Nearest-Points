@@ -32,7 +32,7 @@ DCEL::DCEL(std::string inputFileName)
         //in >> x >> y >> z;
         //TODO: SREDITI OVO
         in >> tmpx >> tmpy >> tmpz;
-        x = static_cast<int>((tmpx + 1)/2.0f*1200);
+        x = static_cast<int>((tmpx + 1)/2.0f*500);
         y = static_cast<int>((tmpy + 1)/2.0f*500);
         v = new Vertex({{x, y}, NULL});
         _vertices.push_back(v);
@@ -75,6 +75,7 @@ DCEL::DCEL(std::string inputFileName)
 
             _vertices[prevIdx]->setIncidentEdge(ei1);
 
+            ei2->setName("e" + std::to_string(_edges.size()+1));
             _edges.push_back(ei1);
             _edges.push_back(ei2);
 
@@ -89,6 +90,7 @@ DCEL::DCEL(std::string inputFileName)
         }
         else
         {
+            ei2->setName("e" + std::to_string(_edges.size()+1));
             ei1 = new HalfEdge(_vertices[prevIdx], nullptr, nullptr, nullptr, nullptr);
             ei2 = new HalfEdge(_vertices[firstIdx], ei1, nullptr, nullptr, f);
             ei1->setTwin(ei2);
@@ -163,6 +165,89 @@ void DCEL::setFields(const std::vector<Field *> &fields)
 {
     _fields = fields;
 }
+
+void DCEL::split(Vertex *v1, Vertex *v2)
+{
+    HalfEdge* en1 = new HalfEdge(v2, nullptr,
+                                 v1->incidentEdge()->prev()->twin(),
+                                 v2->incidentEdge()->twin(),
+                                 v2->incidentEdge()->twin()->incidentFace());
+    HalfEdge* en2 = new HalfEdge(v1, en1,
+                                 en1->prev()->next(),
+                                 en1->next()->prev(),
+                                 v1->incidentEdge()->twin()->incidentFace());
+
+    en1->setTwin(en2);
+
+    en1->next()->setPrev(en1);
+    en1->prev()->setNext(en1);
+    en2->next()->setPrev(en2);
+    en2->prev()->setNext(en2);
+
+    v2->setIncidentEdge(en1);
+    v1->setIncidentEdge(en2);
+
+    Field* f_new = new Field();
+    f_new->setOuterComponent(en2);
+
+    //Azuriranje polja za sve grane koje su sada u novom polju
+    HalfEdge* tmp = en2;
+    while(1)
+    {
+        tmp->setIncidentFace(f_new);
+        tmp = tmp->next();
+        if(tmp == en2)
+            break;
+    }
+
+    _fields.push_back(f_new);
+    _edges.push_back(en1);
+    _edges.push_back(en2);
+}
+
+void DCEL::split2(Vertex *v1, Vertex *v2, HalfEdge *e1_next, HalfEdge *e1_prev, HalfEdge *e2_next, HalfEdge *e2_prev)
+{
+    HalfEdge* en1 = new HalfEdge(v2, nullptr,
+                                 e1_next,
+                                 e1_prev,
+                                 e1_next->incidentFace());
+    HalfEdge* en2 = new HalfEdge(v1, en1,
+                                 e2_next,
+                                 e2_prev,
+                                 e2_prev->incidentFace());
+
+    en1->setTwin(en2);
+
+    e1_next->setPrev(en1);
+    e1_prev->setNext(en1);
+    e2_next->setPrev(en2);
+    e2_prev->setNext(en2);
+
+    v2->setIncidentEdge(en1);
+    v1->setIncidentEdge(en2);
+
+    Field* f_new = new Field();
+    f_new->setOuterComponent(en2);
+
+    //Azuriranje polja za sve grane koje su sada u novom polju
+    HalfEdge* tmp = en2;
+    while(1)
+    {
+        tmp->setIncidentFace(f_new);
+        tmp = tmp->next();
+        if(tmp == en2)
+            break;
+    }
+
+    _fields.push_back(f_new);
+    _edges.push_back(en1);
+    _edges.push_back(en2);
+}
+
+void DCEL::addEdge(HalfEdge *e)
+{
+    _edges.push_back(e);
+}
 /***********************************************************************/
 /*                             VERTEX                                  */
 /***********************************************************************/
@@ -195,16 +280,28 @@ void Vertex::setIncidentEdge(HalfEdge *incidentEdge)
     _incidentEdge = incidentEdge;
 }
 
+VertexType Vertex::type() const
+{
+    return _type;
+}
+
+void Vertex::setType(const VertexType &type)
+{
+    _type = type;
+}
+
 
 /***********************************************************************/
 /*                           HALFEDGE                                  */
 /***********************************************************************/
 HalfEdge::HalfEdge()
-    :_origin{nullptr}, _twin{nullptr}, _next{nullptr}, _prev{nullptr}, _incidentFace{nullptr}
+    :_origin{nullptr}, _twin{nullptr}, _next{nullptr}, _prev{nullptr},
+      _incidentFace{nullptr}, _helper{nullptr}, _name("")
 {}
 
 HalfEdge::HalfEdge(Vertex *origin, HalfEdge *twin, HalfEdge *next, HalfEdge *prev, Field *incidentFace)
-    :_origin{origin}, _twin{twin}, _next{next}, _prev{prev}, _incidentFace{incidentFace}
+    :_origin{origin}, _twin{twin}, _next{next}, _prev{prev},
+      _incidentFace{incidentFace}, _helper{nullptr}, _name("")
 {}
 
 HalfEdge *HalfEdge::twin() const
@@ -255,6 +352,26 @@ Vertex *HalfEdge::origin() const
 void HalfEdge::setOrigin(Vertex *origin)
 {
     _origin = origin;
+}
+
+Vertex *HalfEdge::helper() const
+{
+    return _helper;
+}
+
+void HalfEdge::setHelper(Vertex *helper)
+{
+    _helper = helper;
+}
+
+std::string HalfEdge::name() const
+{
+    return _name;
+}
+
+void HalfEdge::setName(const std::string &name)
+{
+    _name = name;
 }
 
 /***********************************************************************/

@@ -22,7 +22,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
@@ -37,9 +36,9 @@ SOURCES += \
         algorithms_practice/ga03_linesegmentintersection.cpp \
         algorithms_projects/ga03_nearestpoints.cpp \
         timemeasurementthread.cpp \
-    algorithms_practice/ga04_dcel.cpp \
-    algorithms_practice/ga04_dceldemo.cpp \
-    algorithms_practice/ga05_triangulation.cpp
+        algorithms_practice/ga04_dcel.cpp \
+        algorithms_practice/ga04_dceldemo.cpp \
+        algorithms_practice/ga05_triangulation.cpp
 
 	
 HEADERS += \
@@ -52,14 +51,14 @@ HEADERS += \
     	algorithms_practice/ga01_sweepline.h \
         algorithms_projects/ga00_emptyproject.h \
         algorithms_practice/ga02_convexhull.h \
-    algorithms_practice/ga03_linesegmentintersection.h \
-    algorithms_practice/ga03_datastructures.h \
-    algorithms_projects/ga03_nearestpoints.h \
-    timemeasurementthread.h \
-    config.h \
-    algorithms_practice/ga04_dcel.h \
-    algorithms_practice/ga04_dceldemo.h \
-    algorithms_practice/ga05_triangulation.h
+        algorithms_practice/ga03_linesegmentintersection.h \
+        algorithms_practice/ga03_datastructures.h \
+        algorithms_projects/ga03_nearestpoints.h \
+        timemeasurementthread.h \
+        config.h \
+        algorithms_practice/ga04_dcel.h \
+        algorithms_practice/ga04_dceldemo.h \
+        algorithms_practice/ga05_triangulation.h
 
 FORMS += \
         mainwindow.ui
