@@ -1,7 +1,7 @@
 #include "ga05_triangulation.h"
 
 Triangulation::Triangulation(QWidget *pRenderer, int delayMs, std::string filename)
-    :AlgorithmBase (pRenderer, delayMs), _polygon(filename)
+    :AlgorithmBase (pRenderer, delayMs), _polygon(filename), _statusQueue(&_sweepLinePos)
 {
 
 }
@@ -24,4 +24,9 @@ void Triangulation::drawAlgorithm(QPainter &painter) const
 void Triangulation::runNaiveAlgorithm()
 {
 
+}
+
+EdgeCompare::EdgeCompare(double *ypos)
+{
+    _ypos = ypos;
 }
