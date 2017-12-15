@@ -21,6 +21,10 @@ public:
     /* Algoritam grube sile O(n^3)*/
     void runNaiveAlgorithm();
 
+    std::vector<QPoint> convexHullTest() const;
+
+    std::vector<QPoint> convexHull() const;
+
 private:
     /* Funckija poredjenja za std::sort */
     bool compare(const QPoint& p1, const QPoint& p2);
