@@ -3,12 +3,11 @@
 
 #include <algorithmbase.h>
 
-
-
 class NearestPoints : public AlgorithmBase
 {
 public:
     NearestPoints(QWidget* pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
+    NearestPoints(QWidget* pRenderer, int delayMs, const std::vector<QPoint> &points);
 
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
