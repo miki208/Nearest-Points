@@ -6,6 +6,8 @@
 class NearestPoints : public AlgorithmBase
 {
 public:
+    enum AlgorithmStatus {OK, INVALID_INPUT};
+
     NearestPoints(QWidget* pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
     NearestPoints(QWidget* pRenderer, int delayMs, const std::vector<QPoint> &points);
 
@@ -14,9 +16,6 @@ public:
     void runNaiveAlgorithm();
 
     QPair<QPoint, QPoint> nearestPair() const;
-
-    enum AlgorithmStatus {OK, INVALID_INPUT};
-
     AlgorithmStatus status() const;
 
 private:
@@ -71,6 +70,7 @@ private:
 
     int _leftIndex, _rightIndex, _middleIndex; //left, right and middle indices of the current frame
     double _distance; //the minimum distance of the left and right subproblems
+    AlgorithmStatus _status;
     QString _distanceLineLabel;
     std::vector<int> _middleLines; //vertical lines that split the plane into two parts (into two subproblems)
     std::vector<QPoint> _points;
@@ -79,8 +79,6 @@ private:
     std::vector<QPair<QPoint, QPoint>> _localNearestPairs; //the nearest points in subproblems
     QPair<QPoint, QPoint> _nearestPair; //result
     QPoint *_currentFirst, *_currentSecond; //currently selected points (points currently being checked, if not selected, they are equal to nullptr)
-
-    AlgorithmStatus _status;
 };
 
 #endif // GA03_NEARESTPOINTS_H

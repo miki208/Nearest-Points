@@ -146,7 +146,7 @@ void NearestPoints::runNaiveAlgorithm()
 
 void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint> &result)
 {
-    if(right - left == 2) {
+    if(right - left == 2) { //base case (two points)
         _leftIndex = left;
         _rightIndex = right;
         merge(left, left + 1, right);
@@ -154,7 +154,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         _localNearestPairs.push_back({result.first, result.second});
         AlgorithmBase_updateCanvasAndBlock();
         return;
-    } else if(right - left == 3) {
+    } else if(right - left == 3) { //base case (three points)
         _leftIndex = left;
         _rightIndex = right;
         sort3(left);
@@ -224,9 +224,9 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     double min = -1, tmp;
     QPair<QPoint, QPoint> tmp1;
     if(_candidates.size() >= 2) {
-        for(int i = 0; i < _candidates.size() - 1; i++) {
+        for(unsigned i = 0; i < _candidates.size() - 1; i++) {
             _currentFirst = &_candidates[i];
-            for(int j = i + 1; j < _candidates.size() && _candidates[j].y() - _candidates[i].y() < _distance; j++) {
+            for(unsigned j = i + 1; j < _candidates.size() && _candidates[j].y() - _candidates[i].y() < _distance; j++) {
                 _currentSecond = &_candidates[j];
                 AlgorithmBase_updateCanvasAndBlock();
                 tmp = utils::distance(*_currentFirst, *_currentSecond);
