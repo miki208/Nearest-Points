@@ -11,6 +11,12 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
     else
         _points = readPointsFromFile(filename);
 
+    if(_points.size() < 2) {
+        _status = AlgorithmStatus::INVALID_INPUT;
+    } else {
+        _status = AlgorithmStatus::OK;
+    }
+
     _localNearestPairs = {};
     _middleLines = {};
     _candidates = {};
@@ -20,7 +26,10 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
 }
 
 void NearestPoints::runAlgorithm()
-{
+{   
+    if(_status == AlgorithmStatus::INVALID_INPUT)
+        return;
+
     //sorts the points by the x axis O(nlogn)
     std::sort(_points.begin(), _points.end(), [](const QPoint &p1, const QPoint &p2) {
         return p1.x() < p2.x();
@@ -94,6 +103,9 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
 
 void NearestPoints::runNaiveAlgorithm()
 {
+    if(_status == AlgorithmStatus::INVALID_INPUT)
+        return;
+
     unsigned length = _points.size();
     unsigned i = 0;
     unsigned j = 1;
@@ -279,6 +291,11 @@ void NearestPoints::sort3(int left)
             }
         }
     }
+}
+
+NearestPoints::AlgorithmStatus NearestPoints::status() const
+{
+    return _status;
 }
 
 QPair<QPoint, QPoint> NearestPoints::nearestPair() const

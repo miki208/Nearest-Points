@@ -3,6 +3,8 @@
 
 #include <algorithmbase.h>
 
+
+
 class NearestPoints : public AlgorithmBase
 {
 public:
@@ -13,6 +15,10 @@ public:
     void runNaiveAlgorithm();
 
     QPair<QPoint, QPoint> nearestPair() const;
+
+    enum AlgorithmStatus {OK, INVALID_INPUT};
+
+    AlgorithmStatus status() const;
 
 private:
     /* A recursive algorithm that finds two nearest points in the plane
@@ -74,6 +80,8 @@ private:
     std::vector<QPair<QPoint, QPoint>> _localNearestPairs; //the nearest points in subproblems
     QPair<QPoint, QPoint> _nearestPair; //result
     QPoint *_currentFirst, *_currentSecond; //currently selected points (points currently being checked, if not selected, they are equal to nullptr)
+
+    AlgorithmStatus _status;
 };
 
 #endif // GA03_NEARESTPOINTS_H
