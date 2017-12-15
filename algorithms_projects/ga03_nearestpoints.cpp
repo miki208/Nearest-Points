@@ -35,6 +35,8 @@ void NearestPoints::runAlgorithm()
     if(_destroyAnimation)
         return;
 
+    _nearestPair = nearestPair;
+
     AlgorithmBase_updateCanvasAndBlock();
 
     emit animationFinished();
@@ -277,6 +279,11 @@ void NearestPoints::sort3(int left)
             }
         }
     }
+}
+
+QPair<QPoint, QPoint> NearestPoints::nearestPair() const
+{
+    return _nearestPair;
 }
 
 /*

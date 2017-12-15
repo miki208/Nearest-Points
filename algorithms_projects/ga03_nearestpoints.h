@@ -12,6 +12,8 @@ public:
     void drawAlgorithm(QPainter &painter) const;
     void runNaiveAlgorithm();
 
+    QPair<QPoint, QPoint> nearestPair() const;
+
 private:
     /* A recursive algorithm that finds two nearest points in the plane
      *  left    - left index of sorted array of points (by x axis)
@@ -70,7 +72,7 @@ private:
     std::vector<QPoint> _pointsCopy; //a copy of the points (necessary to preserve order, according to the x axis)
     std::vector<QPoint> _candidates; //points with x coord in range (middle - _distance, middle + _distance)
     std::vector<QPair<QPoint, QPoint>> _localNearestPairs; //the nearest points in subproblems
-    QPair<QPoint, QPoint> _nearestPair; //result (for naive algorithm only)
+    QPair<QPoint, QPoint> _nearestPair; //result
     QPoint *_currentFirst, *_currentSecond; //currently selected points (points currently being checked, if not selected, they are equal to nullptr)
 };
 
