@@ -1,7 +1,7 @@
 #ifndef GA03_NEARESTPOINTS_H
 #define GA03_NEARESTPOINTS_H
 
-#include <algorithmbase.h>
+#include "algorithmbase.h"
 
 class NearestPoints : public AlgorithmBase
 {
