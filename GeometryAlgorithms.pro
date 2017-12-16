@@ -38,7 +38,8 @@ SOURCES += \
         timemeasurementthread.cpp \
         algorithms_practice/ga04_dcel.cpp \
         algorithms_practice/ga04_dceldemo.cpp \
-        algorithms_practice/ga05_triangulation.cpp
+        algorithms_practice/ga05_triangulation.cpp \
+    algorithms_projects/ga05_incrementalinsertion.cpp
 
 	
 HEADERS += \
@@ -58,7 +59,8 @@ HEADERS += \
         config.h \
         algorithms_practice/ga04_dcel.h \
         algorithms_practice/ga04_dceldemo.h \
-        algorithms_practice/ga05_triangulation.h
+        algorithms_practice/ga05_triangulation.h \
+    algorithms_projects/ga05_incrementalinsertion.h
 
 FORMS += \
         mainwindow.ui
