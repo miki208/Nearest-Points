@@ -27,8 +27,10 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
 
 void NearestPoints::runAlgorithm()
 {   
-    if(_status == AlgorithmStatus::INVALID_INPUT)
+    if(_status == AlgorithmStatus::INVALID_INPUT) {
+        emit animationFinished();
         return;
+    }
 
     //sorts the points by the x axis O(nlogn)
     std::sort(_points.begin(), _points.end(), [](const QPoint &p1, const QPoint &p2) {
