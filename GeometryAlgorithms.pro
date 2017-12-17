@@ -31,7 +31,6 @@ SOURCES += \
         utils.cpp \
         algorithms_practice/ga00_drawpolygon.cpp \
     	algorithms_practice/ga01_sweepline.cpp \
-        algorithms_practice/ga02_convexhull.cpp \
         algorithms_projects/ga00_emptyproject.cpp \
         algorithms_practice/ga03_linesegmentintersection.cpp \
         algorithms_projects/ga03_nearestpoints.cpp \
@@ -39,7 +38,8 @@ SOURCES += \
         algorithms_practice/ga04_dcel.cpp \
         algorithms_practice/ga04_dceldemo.cpp \
         algorithms_practice/ga05_triangulation.cpp \
-    algorithms_projects/ga05_incrementalinsertion.cpp
+    algorithms_projects/ga05_incrementalinsertion.cpp \
+    algorithms_practice/ga02_grahamscan.cpp
 
 	
 HEADERS += \
@@ -51,7 +51,6 @@ HEADERS += \
         algorithms_practice/ga00_drawpolygon.h \
     	algorithms_practice/ga01_sweepline.h \
         algorithms_projects/ga00_emptyproject.h \
-        algorithms_practice/ga02_convexhull.h \
         algorithms_practice/ga03_linesegmentintersection.h \
         algorithms_practice/ga03_datastructures.h \
         algorithms_projects/ga03_nearestpoints.h \
@@ -60,7 +59,8 @@ HEADERS += \
         algorithms_practice/ga04_dcel.h \
         algorithms_practice/ga04_dceldemo.h \
         algorithms_practice/ga05_triangulation.h \
-    algorithms_projects/ga05_incrementalinsertion.h
+    algorithms_projects/ga05_incrementalinsertion.h \
+    algorithms_practice/ga02_grahamscan.h
 
 FORMS += \
         mainwindow.ui

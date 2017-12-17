@@ -1,7 +1,7 @@
 #include <QPainter>
 
 #include "ga05_incrementalinsertion.h"
-#include "../algorithms_practice/ga02_convexhull.h"
+#include "../algorithms_practice/ga02_grahamscan.h"
 #include "utils.h"
 
 

@@ -28,7 +28,7 @@ public:
         EMPTY_PRACTICE = 0,
         DRAW_POLYGON,
         SWEEP_LINE,
-        CONVEX_HULL,
+        GRAHAM_SCAN,
         LINE_SEGMENT_INTERSECTION,
         DCEL_DEMO,
         TRIANGULATION,

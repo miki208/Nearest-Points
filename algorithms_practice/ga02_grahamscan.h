@@ -6,10 +6,10 @@
 #include <set>
 #include <functional>
 
-class ConvexHull : public AlgorithmBase
+class GrahamScan : public AlgorithmBase
 {
 public:
-    ConvexHull(QWidget *pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
+    GrahamScan(QWidget *pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
 
 public:
     // AlgorithmBase interface

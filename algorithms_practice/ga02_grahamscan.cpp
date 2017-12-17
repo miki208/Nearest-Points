@@ -1,11 +1,11 @@
-#include "ga02_convexhull.h"
+#include "ga02_grahamscan.h"
 
 #include <functional>
 
 #include "utils.h"
 #include <iostream>
 
-ConvexHull::ConvexHull(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
+GrahamScan::GrahamScan(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
     :AlgorithmBase (pRenderer, delayMs)
 {
     if(filename == "")
@@ -14,7 +14,7 @@ ConvexHull::ConvexHull(QWidget *pRenderer, int delayMs, std::string filename, in
         _points = readPointsFromFile(filename);
 }
 
-void ConvexHull::runAlgorithm()
+void GrahamScan::runAlgorithm()
 {
     //Pronalazak najdesnije tacke
     _firstPoint = _points[0];
@@ -78,7 +78,7 @@ void ConvexHull::runAlgorithm()
     emit animationFinished();
 }
 
-void ConvexHull::drawAlgorithm(QPainter &painter) const
+void GrahamScan::drawAlgorithm(QPainter &painter) const
 {
     QPen p = painter.pen();
     p.setWidth(1);
@@ -114,7 +114,7 @@ void ConvexHull::drawAlgorithm(QPainter &painter) const
     }
 }
 
-void ConvexHull::runNaiveAlgorithm()
+void GrahamScan::runNaiveAlgorithm()
 {
     int i, j, k;
     int pointsNum = _points.size();
@@ -159,7 +159,7 @@ void ConvexHull::runNaiveAlgorithm()
     AlgorithmBase_updateCanvasAndBlock();
 }
 
-bool ConvexHull::compare(const QPoint &p1, const QPoint &p2)
+bool GrahamScan::compare(const QPoint &p1, const QPoint &p2)
 {
     double angle1 = atan2(_firstPoint.y() - p1.y(), _firstPoint.x() - p1.x());
     double angle2 = atan2(_firstPoint.y() - p2.y(), _firstPoint.x() - p2.x());
@@ -170,12 +170,12 @@ bool ConvexHull::compare(const QPoint &p1, const QPoint &p2)
         return utils::distance(p1, _firstPoint) < utils::distance(p2, _firstPoint);
 }
 
-std::vector<QPoint> ConvexHull::convexHull() const
+std::vector<QPoint> GrahamScan::convexHull() const
 {
     return _convexHull;
 }
 
-std::vector<QPoint> ConvexHull::convexHullTest() const
+std::vector<QPoint> GrahamScan::convexHullTest() const
 {
     return _convexHullTest;
 }

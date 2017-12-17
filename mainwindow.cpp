@@ -14,7 +14,7 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithmbase.h"
 #include "algorithms_practice/ga01_sweepline.h"
 #include "algorithms_practice/ga00_drawpolygon.h"
-#include "algorithms_practice/ga02_convexhull.h"
+#include "algorithms_practice/ga02_grahamscan.h"
 #include "algorithms_practice/ga03_linesegmentintersection.h"
 #include "algorithms_practice/ga04_dceldemo.h"
 #include "algorithms_practice/ga05_triangulation.h"
@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("SA CASOVA VEZBI:", QVariant(EMPTY_PRACTICE));
     ui->algorithmType->addItem("Demonstacija iscrtavanja", QVariant(DRAW_POLYGON));
     ui->algorithmType->addItem("Brisuca prava mini demo", QVariant(SWEEP_LINE));
-    ui->algorithmType->addItem("Konveksni omotac", QVariant(CONVEX_HULL));
+    ui->algorithmType->addItem("Konveksni omotac (Graham scan)", QVariant(GRAHAM_SCAN));
     ui->algorithmType->addItem("Preseci duzi", QVariant(LINE_SEGMENT_INTERSECTION));
     ui->algorithmType->addItem("DCEL Demo", QVariant(DCEL_DEMO));
     ui->algorithmType->addItem("Triangulacija", QVariant(TRIANGULATION));
@@ -138,8 +138,8 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
         case SWEEP_LINE:
             _pAlgorithm = new SweepLine(_renderArea, _delayMs, _filename);
             break;
-        case CONVEX_HULL:
-            _pAlgorithm = new ConvexHull(_renderArea, _delayMs, _filename);
+        case GRAHAM_SCAN:
+            _pAlgorithm = new GrahamScan(_renderArea, _delayMs, _filename);
             break;
         case LINE_SEGMENT_INTERSECTION:
             _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);

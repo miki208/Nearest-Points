@@ -3,7 +3,7 @@
 #include "config.h"
 #include "mainwindow.h"
 #include "algorithmbase.h"
-#include "algorithms_practice/ga02_convexhull.h"
+#include "algorithms_practice/ga02_grahamscan.h"
 #include "algorithms_practice/ga01_sweepline.h"
 #include "algorithms_practice/ga00_drawpolygon.h"
 #include "algorithms_practice/ga03_linesegmentintersection.h"
@@ -36,8 +36,8 @@ void TimeMeasurementThread::run()
             case MainWindow::SWEEP_LINE:
                 pAlgorithm = new SweepLine(nullptr, 0, "");
                 break;
-            case MainWindow::CONVEX_HULL:
-                pAlgorithm = new ConvexHull(nullptr, 0, "", i);
+            case MainWindow::GRAHAM_SCAN:
+                pAlgorithm = new GrahamScan(nullptr, 0, "", i);
                 break;
             case MainWindow::LINE_SEGMENT_INTERSECTION:
                 pAlgorithm = new LineSegmentIntersection(nullptr, 0, "", i);
