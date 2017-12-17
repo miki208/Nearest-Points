@@ -40,7 +40,8 @@ SOURCES += \
         algorithms_practice/ga05_triangulation.cpp \
     algorithms_projects/ga05_incrementalinsertion.cpp \
     algorithms_practice/ga02_grahamscan.cpp \
-    algorithms_practice/convexhull.cpp
+    algorithms_practice/convexhull.cpp \
+    algorithms_projects/ga05_quickhull.cpp
 
 	
 HEADERS += \
@@ -62,7 +63,8 @@ HEADERS += \
         algorithms_practice/ga05_triangulation.h \
     algorithms_projects/ga05_incrementalinsertion.h \
     algorithms_practice/ga02_grahamscan.h \
-    algorithms_practice/convexhull.h
+    algorithms_practice/convexhull.h \
+    algorithms_projects/ga05_quickhull.h
 
 FORMS += \
         mainwindow.ui

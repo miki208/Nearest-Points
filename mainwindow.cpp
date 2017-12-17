@@ -21,6 +21,7 @@ QT_CHARTS_USE_NAMESPACE
 
 #include "algorithms_projects/ga03_nearestpoints.h"
 #include "algorithms_projects/ga05_incrementalinsertion.h"
+#include "algorithms_projects/ga05_quickhull.h"
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -45,7 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("STUDENTSKI PROJEKTI:", QVariant(EMPTY_PROJECTS));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [START]*/
     ui->algorithmType->addItem("Određivanje dve najbliže tačke u ravni", QVariant(NEAREST_POINTS));
-    ui->algorithmType->addItem("Konveksni omotač (metod brišuće prave)", QVariant(INCREMENTAL_INSERTION));
+    ui->algorithmType->addItem("Konveksni omotač (Incremental insertion)", QVariant(INCREMENTAL_INSERTION));
+    ui->algorithmType->addItem("Konveksni omotač (QuickHull) - under construction", QVariant(QUICK_HULL));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
@@ -155,6 +157,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             break;
         case INCREMENTAL_INSERTION:
             _pAlgorithm = new IncrementalInsertion(_renderArea, _delayMs, _filename);
+            break;
+        case QUICK_HULL:
+            _pAlgorithm = new QuickHull(_renderArea, _delayMs, _filename);
             break;
     }
 

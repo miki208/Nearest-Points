@@ -38,6 +38,7 @@ public:
         EMPTY_PROJECTS = 100,
         NEAREST_POINTS,
         INCREMENTAL_INSERTION,
+        QUICK_HULL,
         /* Ovde se ubacuju enum-i za studentske projekte
          * (nije potrebno navoditi konkretne brojeve)
         */
