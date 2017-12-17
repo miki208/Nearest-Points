@@ -25,24 +25,6 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
     _currentSecond = nullptr;
 }
 
-NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, const std::vector<QPoint> &points):AlgorithmBase{pRenderer, delayMs}
-{
-    _points = std::vector<QPoint>(points);
-
-    if(_points.size() < 2) {
-        _status = AlgorithmStatus::INVALID_INPUT;
-    } else {
-        _status = AlgorithmStatus::OK;
-    }
-
-    _localNearestPairs = {};
-    _middleLines = {};
-    _candidates = {};
-    _distance = -1;
-    _currentFirst = nullptr;
-    _currentSecond = nullptr;
-}
-
 void NearestPoints::runAlgorithm()
 {   
     if(_status == AlgorithmStatus::INVALID_INPUT)
@@ -309,6 +291,16 @@ void NearestPoints::sort3(int left)
             }
         }
     }
+}
+
+std::vector<QPoint> NearestPoints::points() const
+{
+    return _points;
+}
+
+void NearestPoints::setPoints(const std::vector<QPoint> &points)
+{
+    _points = points;
 }
 
 NearestPoints::AlgorithmStatus NearestPoints::status() const

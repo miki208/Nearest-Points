@@ -9,7 +9,6 @@ public:
     enum AlgorithmStatus {OK, INVALID_INPUT};
 
     NearestPoints(QWidget* pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
-    NearestPoints(QWidget* pRenderer, int delayMs, const std::vector<QPoint> &points);
 
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
@@ -17,6 +16,10 @@ public:
 
     QPair<QPoint, QPoint> nearestPair() const;
     AlgorithmStatus status() const;
+
+    /* Getter and setter for _points (only for testing purposes!) */
+    std::vector<QPoint> points() const;
+    void setPoints(const std::vector<QPoint> &points);
 
 private:
     /* A recursive algorithm that finds two nearest points in the plane
