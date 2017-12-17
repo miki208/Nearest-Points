@@ -170,12 +170,12 @@ bool ConvexHull::compare(const QPoint &p1, const QPoint &p2)
         return utils::distance(p1, _firstPoint) < utils::distance(p2, _firstPoint);
 }
 
-std::vector<QPoint> ConvexHull::convexHullTest() const
-{
-    return _convexHullTest;
-}
-
 std::vector<QPoint> ConvexHull::convexHull() const
 {
     return _convexHull;
+}
+
+std::vector<QPoint> ConvexHull::convexHullTest() const
+{
+    return _convexHullTest;
 }

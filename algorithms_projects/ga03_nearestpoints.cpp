@@ -11,6 +11,30 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
     else
         _points = readPointsFromFile(filename);
 
+    if(_points.size() < 2) {
+        _status = AlgorithmStatus::INVALID_INPUT;
+    } else {
+        _status = AlgorithmStatus::OK;
+    }
+
+    _localNearestPairs = {};
+    _middleLines = {};
+    _candidates = {};
+    _distance = -1;
+    _currentFirst = nullptr;
+    _currentSecond = nullptr;
+}
+
+NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, const std::vector<QPoint> &points):AlgorithmBase{pRenderer, delayMs}
+{
+    _points = std::vector<QPoint>(points);
+
+    if(_points.size() < 2) {
+        _status = AlgorithmStatus::INVALID_INPUT;
+    } else {
+        _status = AlgorithmStatus::OK;
+    }
+
     _localNearestPairs = {};
     _middleLines = {};
     _candidates = {};
@@ -20,7 +44,10 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
 }
 
 void NearestPoints::runAlgorithm()
-{
+{   
+    if(_status == AlgorithmStatus::INVALID_INPUT)
+        return;
+
     //sorts the points by the x axis O(nlogn)
     std::sort(_points.begin(), _points.end(), [](const QPoint &p1, const QPoint &p2) {
         return p1.x() < p2.x();
@@ -34,6 +61,8 @@ void NearestPoints::runAlgorithm()
     findNearestPoints(0, _points.size(), nearestPair); //O(nlogn) - T(N) = 2T(N/2) + cN
     if(_destroyAnimation)
         return;
+
+    _nearestPair = nearestPair;
 
     AlgorithmBase_updateCanvasAndBlock();
 
@@ -92,6 +121,9 @@ void NearestPoints::drawAlgorithm(QPainter &painter) const
 
 void NearestPoints::runNaiveAlgorithm()
 {
+    if(_status == AlgorithmStatus::INVALID_INPUT)
+        return;
+
     unsigned length = _points.size();
     unsigned i = 0;
     unsigned j = 1;
@@ -114,7 +146,7 @@ void NearestPoints::runNaiveAlgorithm()
 
 void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint> &result)
 {
-    if(right - left == 2) {
+    if(right - left == 2) { //base case (two points)
         _leftIndex = left;
         _rightIndex = right;
         merge(left, left + 1, right);
@@ -122,7 +154,7 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
         _localNearestPairs.push_back({result.first, result.second});
         AlgorithmBase_updateCanvasAndBlock();
         return;
-    } else if(right - left == 3) {
+    } else if(right - left == 3) { //base case (three points)
         _leftIndex = left;
         _rightIndex = right;
         sort3(left);
@@ -192,9 +224,9 @@ void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint>
     double min = -1, tmp;
     QPair<QPoint, QPoint> tmp1;
     if(_candidates.size() >= 2) {
-        for(int i = 0; i < _candidates.size() - 1; i++) {
+        for(unsigned i = 0; i < _candidates.size() - 1; i++) {
             _currentFirst = &_candidates[i];
-            for(int j = i + 1; j < _candidates.size() && _candidates[j].y() - _candidates[i].y() < _distance; j++) {
+            for(unsigned j = i + 1; j < _candidates.size() && _candidates[j].y() - _candidates[i].y() < _distance; j++) {
                 _currentSecond = &_candidates[j];
                 AlgorithmBase_updateCanvasAndBlock();
                 tmp = utils::distance(*_currentFirst, *_currentSecond);
@@ -277,6 +309,16 @@ void NearestPoints::sort3(int left)
             }
         }
     }
+}
+
+NearestPoints::AlgorithmStatus NearestPoints::status() const
+{
+    return _status;
+}
+
+QPair<QPoint, QPoint> NearestPoints::nearestPair() const
+{
+    return _nearestPair;
 }
 
 /*

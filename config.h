@@ -4,12 +4,12 @@
 //#define SKIP_OPTIMAL
 //#define SKIP_NAIVE
 
-//Measurement testing params
+//Measurement testing params (default: 3, 100, 1000)
 #define MIN_DIM         (3)
 #define STEP            (100)
 #define MAX_DIM         (1000)
 
-//Axes params
+//Axes params (default: 1, MAX_DIM)
 #define Y_MAX_VAL       (1)
 #define X_MAX_VAL       (MAX_DIM)
 

@@ -37,6 +37,7 @@ public:
     enum Projects_AlgorithmType {
         EMPTY_PROJECTS = 100,
         NEAREST_POINTS,
+        INCREMENTAL_INSERTION,
         /* Ovde se ubacuju enum-i za studentske projekte
          * (nije potrebno navoditi konkretne brojeve)
         */

@@ -20,12 +20,13 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithms_practice/ga05_triangulation.h"
 
 #include "algorithms_projects/ga03_nearestpoints.h"
+#include "algorithms_projects/ga05_incrementalinsertion.h"
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _pAlgorithm{nullptr}, _delayMs{500}
+    _pAlgorithm{nullptr}, _delayMs{500}     // (default: 500)
 {
     ui->setupUi(this);
 
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("STUDENTSKI PROJEKTI:", QVariant(EMPTY_PROJECTS));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [START]*/
     ui->algorithmType->addItem("Odredjivanje dve najblize tacke u ravni", QVariant(NEAREST_POINTS));
+    ui->algorithmType->addItem("Konveksni omotač (brišuća prava)", QVariant(INCREMENTAL_INSERTION));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
@@ -150,6 +152,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             break;
         case NEAREST_POINTS:
             _pAlgorithm = new NearestPoints(_renderArea, _delayMs, _filename);
+            break;
+        case INCREMENTAL_INSERTION:
+            _pAlgorithm = new IncrementalInsertion(_renderArea, _delayMs, _filename);
             break;
     }
 

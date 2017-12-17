@@ -100,7 +100,7 @@ signals:
     void animationFinished();
 
 protected:
-    static int constexpr DEFAULT_POINTS_NUM = 20;
+    static int constexpr DEFAULT_POINTS_NUM = 20;   // (default: 20)
 
     ///
     /// \brief updateCanvasAndBlock - azuriranje crteza i blokiranje dok se semafor ne oslobodi

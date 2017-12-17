@@ -54,6 +54,7 @@ void Triangulation::runAlgorithm()
         HalfEdge* ei = c->incidentEdge()->twin()->next();
         HalfEdge* ei_prev = c->incidentEdge()->twin();
 
+        //TODO: Replace this with nearest left halfedge
         auto ejit = _statusQueue.begin();
         HalfEdge* ej = *ejit;
 
@@ -139,10 +140,6 @@ void Triangulation::drawAlgorithm(QPainter &painter) const
     {
         painter.drawLine(_polygon.edges()[i]->origin()->coordinates(),
                          _polygon.edges()[i]->twin()->origin()->coordinates());
-
-//        QPointF loc = (_polygon.edges()[i]->origin()->coordinates() +
-//                    _polygon.edges()[i]->twin()->origin()->coordinates())/2;
-//        painter.drawText(loc, QString::fromStdString(_polygon.edges()[i+1]->name()));
     }
 
     for(const Vertex* v : _polygon.vertices())
