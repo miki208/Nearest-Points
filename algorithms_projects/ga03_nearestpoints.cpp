@@ -128,6 +128,7 @@ void NearestPoints::runNaiveAlgorithm()
     }
 
     AlgorithmBase_updateCanvasAndBlock();
+    _status = AlgorithmStatus::OK;
 }
 
 void NearestPoints::findNearestPoints(int left, int right, QPair<QPoint, QPoint> &result)
