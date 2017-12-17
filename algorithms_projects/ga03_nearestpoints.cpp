@@ -300,6 +300,11 @@ std::vector<QPoint> NearestPoints::points() const
 
 void NearestPoints::setPoints(const std::vector<QPoint> &points)
 {
+    if(points.size() == 0)
+        _status = AlgorithmStatus::INVALID_INPUT;
+    else
+        _status = AlgorithmStatus::OK;
+
     _points = points;
 }
 
