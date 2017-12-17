@@ -19,7 +19,7 @@ Studenti:
 
 ### Unit testovi
  Prezentacija sa časa: http://poincare.matf.bg.ac.rs/~asimic/2017/ga/7/UnitTests.pdf \
- Na kraju prezentacije su date sve informacije o integraciji unit testova sa nasim projektom. \
+ Na kraju prezentacije su date sve informacije o integraciji unit testova sa našim projektom. \
 
 ### Link do šablona za projektnu dokumentaciju
 https://docs.google.com/document/d/10zCuGxrLbyux7fsQ6qOlZkl4rErQndfw06WiUanXnGs/edit?usp=sharing
@@ -46,13 +46,13 @@ https://docs.google.com/document/d/10zCuGxrLbyux7fsQ6qOlZkl4rErQndfw06WiUanXnGs/
     * ga00_convexHull.pdf
     * ga01_temaPrvogStudenta.docx
     * ga01_temaPrvogStudenta.pdf
-    *...
-    *...
+    * ...
+    * ...
     * ga25_temaPoslednjegStudenta.docx
     * ga25_temaPoslednjegStudenta.pdf
   * input_files [Sadrži foldere sa raznim unapred zadatim ulazima za Vaše algoritme] 
     * ga01_temaPrvogStudenta
-    *...
+    * ...
     * ga25_temaPoslednjegStudenta 
 
 ### Osnovne komande
