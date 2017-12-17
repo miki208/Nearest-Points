@@ -6,13 +6,8 @@
 #include <iostream>
 
 GrahamScan::GrahamScan(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    :AlgorithmBase (pRenderer, delayMs)
-{
-    if(filename == "")
-        _points = generateRandomPoints(inputSize);
-    else
-        _points = readPointsFromFile(filename);
-}
+    : ConvexHull(pRenderer, delayMs, filename, inputSize)
+{}
 
 void GrahamScan::runAlgorithm()
 {
@@ -116,47 +111,7 @@ void GrahamScan::drawAlgorithm(QPainter &painter) const
 
 void GrahamScan::runNaiveAlgorithm()
 {
-    int i, j, k;
-    int pointsNum = _points.size();
-    bool valid;
-
-    for(i=0; i<pointsNum; i++)
-    {
-        for(j=0; j<pointsNum; j++)
-        {
-            if(i!=j)
-            {
-                valid = true;
-                for(k=0; k<pointsNum; k++)
-                {
-                    if(k == i || k == j)
-                        continue;
-                    if(utils::negativeOrientation(_points[i], _points[j], _points[k]))
-                    {   valid = false;
-                        break;
-                    }
-                }
-                if(valid)
-                {
-                    _convexHullTest.push_back(_points[i]);
-                    _convexHullTest.push_back(_points[j]);
-                }
-            }
-        }
-    }
-    //Sortiranje po uglu
-    std::sort(_convexHullTest.begin(), _convexHullTest.end(), [&](const QPoint& lhs, const QPoint& rhs){return compare(lhs, rhs);});
-
-    //Ukloni duplikate
-    auto it = std::unique(_convexHullTest.begin(), _convexHullTest.end());
-    _convexHullTest.resize(std::distance(_convexHullTest.begin(), it));
-
-    //Ukloni prvu tacku iz sredine i dodaj je na kraj
-    auto f = std::find(_convexHullTest.begin(), _convexHullTest.end(), _firstPoint);
-    if(f != _convexHullTest.end())
-        _convexHullTest.erase(f);
-    _convexHullTest.push_back(_firstPoint);
-    AlgorithmBase_updateCanvasAndBlock();
+    ConvexHull::runNaiveAlgorithm();
 }
 
 bool GrahamScan::compare(const QPoint &p1, const QPoint &p2)
@@ -177,5 +132,5 @@ std::vector<QPoint> GrahamScan::convexHull() const
 
 std::vector<QPoint> GrahamScan::convexHullTest() const
 {
-    return _convexHullTest;
+    return ConvexHull::convexHullTest();
 }

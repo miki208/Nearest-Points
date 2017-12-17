@@ -1,7 +1,6 @@
 #include <QPainter>
 
 #include "ga05_incrementalinsertion.h"
-#include "../algorithms_practice/ga02_grahamscan.h"
 #include "utils.h"
 
 
@@ -9,67 +8,62 @@
 // Incremental insertion
 //-----------------------------------------------------------------------------
 IncrementalInsertion::IncrementalInsertion(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase {pRenderer, delayMs}, _xPositionOfSweepline(0), _numberOfPointsInHull(0), _hasProblematicPoints(true)
-{
-    if (filename == "")
-        _rawPoints = generateRandomPoints(inputSize);
-    else
-        _rawPoints = readPointsFromFile(filename);
-}
+    : ConvexHull(pRenderer, delayMs, filename, inputSize),
+      _xPositionOfSweepline(0), _numberOfPointsInHull(0), _hasProblematicPoints(true)
+{}
 
-#include <QDebug>
 //-----------------------------------------------------------------------------
 // runAlgorithm
 //-----------------------------------------------------------------------------
 void IncrementalInsertion::runAlgorithm()
 {
     // sort raw points by their x-coordinates
-    std::sort(_rawPoints.begin(), _rawPoints.end(), [&](const QPoint& lhs, const QPoint& rhs){ return _compare(lhs, rhs); });
+    std::sort(_points.begin(), _points.end(), [&](const QPoint& lhs, const QPoint& rhs){ return _compare(lhs, rhs); });
 
     // create complex points
-    for (const QPoint &p : _rawPoints)
+    for (const QPoint &p : _points)
     {
-        _points.push_back(Point(p));
+        _complexPoints.push_back(Point(p));
     }
 
     AlgorithmBase_updateCanvasAndBlock();
 
     // init
-    _points[0].setNextPoint(&_points[1]);
-    _points[0].setPrevPoint(&_points[1]);
-    _points[1].setNextPoint(&_points[0]);
-    _points[1].setPrevPoint(&_points[0]);
+    _complexPoints[0].setNextPoint(&_complexPoints[1]);
+    _complexPoints[0].setPrevPoint(&_complexPoints[1]);
+    _complexPoints[1].setNextPoint(&_complexPoints[0]);
+    _complexPoints[1].setPrevPoint(&_complexPoints[0]);
 
     // process the 1st point
-    _xPositionOfSweepline = _points[0].getValue().x();
+    _xPositionOfSweepline = _complexPoints[0].getValue().x();
     ++_numberOfPointsInHull;
     AlgorithmBase_updateCanvasAndBlock();
 
     // process the 2nd point
-    _xPositionOfSweepline = _points[1].getValue().x();
+    _xPositionOfSweepline = _complexPoints[1].getValue().x();
     ++_numberOfPointsInHull;
     AlgorithmBase_updateCanvasAndBlock();
 
     Point *firstProblematicPoint = nullptr;
-    if (_points[0].getValue().x() == _points[1].getValue().x())
+    if (_complexPoints[0].getValue().x() == _complexPoints[1].getValue().x())
     {
-        firstProblematicPoint = &_points[0];
+        firstProblematicPoint = &_complexPoints[0];
     }
     else
     {
         _hasProblematicPoints = false;
     }
 
-    for (int i = 2; i < _points.size(); ++i)
+    for (int i = 2; i < _complexPoints.size(); ++i)
     {
         if (_hasProblematicPoints)
         {
-            if (_points[i].getValue().x() == _points[i-1].getValue().x())
+            if (_complexPoints[i].getValue().x() == _complexPoints[i-1].getValue().x())
             {
-                _points[i].setNextPoint(firstProblematicPoint);
-                _points[i].setPrevPoint(&_points[i-1]);
-                firstProblematicPoint->setPrevPoint(&_points[i]);
-                _points[i-1].setNextPoint(&_points[i]);
+                _complexPoints[i].setNextPoint(firstProblematicPoint);
+                _complexPoints[i].setPrevPoint(&_complexPoints[i-1]);
+                firstProblematicPoint->setPrevPoint(&_complexPoints[i]);
+                _complexPoints[i-1].setNextPoint(&_complexPoints[i]);
 
                 continue;
             }
@@ -78,56 +72,56 @@ void IncrementalInsertion::runAlgorithm()
         }
 
         ++_numberOfPointsInHull;
-        _xPositionOfSweepline = _points[i].getValue().x();
+        _xPositionOfSweepline = _complexPoints[i].getValue().x();
 
-        if (_points[i].getValue().y() < _points[i-1].getValue().y())    // curPoint is above prevPoint
+        if (_complexPoints[i].getValue().y() < _complexPoints[i-1].getValue().y())    // curPoint is above prevPoint
         {
-            if (!_whichSide(_points[i].getValue(), _points[i-1].getValue(), _points[i-1].getPrevPoint()->getValue()))
+            if (!_whichSide(_complexPoints[i].getValue(), _complexPoints[i-1].getValue(), _complexPoints[i-1].getPrevPoint()->getValue()))
             {
-                _points[i].setNextPoint(_points[i-1].getNextPoint());
-                _points[i].setPrevPoint(&_points[i-1]);
-                _points[i-1].getNextPoint()->setPrevPoint(&_points[i]);
-                _points[i-1].setNextPoint(&_points[i]);
+                _complexPoints[i].setNextPoint(_complexPoints[i-1].getNextPoint());
+                _complexPoints[i].setPrevPoint(&_complexPoints[i-1]);
+                _complexPoints[i-1].getNextPoint()->setPrevPoint(&_complexPoints[i]);
+                _complexPoints[i-1].setNextPoint(&_complexPoints[i]);
             }
             else
             {
-                _points[i].setNextPoint(&_points[i-1]);
-                _points[i].setPrevPoint(_points[i-1].getPrevPoint());
-                _points[i-1].getPrevPoint()->setNextPoint(&_points[i]);
-                _points[i-1].setPrevPoint(&_points[i]);
+                _complexPoints[i].setNextPoint(&_complexPoints[i-1]);
+                _complexPoints[i].setPrevPoint(_complexPoints[i-1].getPrevPoint());
+                _complexPoints[i-1].getPrevPoint()->setNextPoint(&_complexPoints[i]);
+                _complexPoints[i-1].setPrevPoint(&_complexPoints[i]);
             }
         }
         else                                                            // curPoint is below prevPoint
         {
-            if (!_whichSide(_points[i].getValue(), _points[i-1].getValue(), _points[i-1].getPrevPoint()->getValue()))
+            if (!_whichSide(_complexPoints[i].getValue(), _complexPoints[i-1].getValue(), _complexPoints[i-1].getPrevPoint()->getValue()))
             {
-                _points[i].setNextPoint(_points[i-1].getNextPoint());
-                _points[i].setPrevPoint(&_points[i-1]);
-                _points[i-1].getNextPoint()->setPrevPoint(&_points[i]);
-                _points[i-1].setNextPoint(&_points[i]);
+                _complexPoints[i].setNextPoint(_complexPoints[i-1].getNextPoint());
+                _complexPoints[i].setPrevPoint(&_complexPoints[i-1]);
+                _complexPoints[i-1].getNextPoint()->setPrevPoint(&_complexPoints[i]);
+                _complexPoints[i-1].setNextPoint(&_complexPoints[i]);
             }
             else
             {
-                _points[i].setNextPoint(&_points[i-1]);
-                _points[i].setPrevPoint(_points[i-1].getPrevPoint());
-                _points[i-1].getPrevPoint()->setNextPoint(&_points[i]);
-                _points[i-1].setPrevPoint(&_points[i]);
+                _complexPoints[i].setNextPoint(&_complexPoints[i-1]);
+                _complexPoints[i].setPrevPoint(_complexPoints[i-1].getPrevPoint());
+                _complexPoints[i-1].getPrevPoint()->setNextPoint(&_complexPoints[i]);
+                _complexPoints[i-1].setPrevPoint(&_complexPoints[i]);
             }
         }
         AlgorithmBase_updateCanvasAndBlock();
 
-        while (utils::negativeOrientation(_points[i].getValue(), _points[i].getPrevPoint()->getValue(), _points[i].getPrevPoint()->getPrevPoint()->getValue()))
+        while (utils::negativeOrientation(_complexPoints[i].getValue(), _complexPoints[i].getPrevPoint()->getValue(), _complexPoints[i].getPrevPoint()->getPrevPoint()->getValue()))
         {
-            (_points[i].getPrevPoint()->getPrevPoint())->setNextPoint(&_points[i]);
-            _points[i].setPrevPoint(_points[i].getPrevPoint()->getPrevPoint());
+            (_complexPoints[i].getPrevPoint()->getPrevPoint())->setNextPoint(&_complexPoints[i]);
+            _complexPoints[i].setPrevPoint(_complexPoints[i].getPrevPoint()->getPrevPoint());
             AlgorithmBase_updateCanvasAndBlock();
         }
         AlgorithmBase_updateCanvasAndBlock();
 
-        while (utils::negativeOrientation(_points[i].getNextPoint()->getNextPoint()->getValue(), _points[i].getNextPoint()->getValue(), _points[i].getValue()))
+        while (utils::negativeOrientation(_complexPoints[i].getNextPoint()->getNextPoint()->getValue(), _complexPoints[i].getNextPoint()->getValue(), _complexPoints[i].getValue()))
         {
-            (_points[i].getNextPoint()->getNextPoint())->setPrevPoint(&_points[i]);
-            _points[i].setNextPoint(_points[i].getNextPoint()->getNextPoint());
+            (_complexPoints[i].getNextPoint()->getNextPoint())->setPrevPoint(&_complexPoints[i]);
+            _complexPoints[i].setNextPoint(_complexPoints[i].getNextPoint()->getNextPoint());
             AlgorithmBase_updateCanvasAndBlock();
         }
 
@@ -156,7 +150,7 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
     p.setWidth(2);
     p.setColor(QColor(0, 130, 255));
     painter.setPen(p);
-    const Point *currentPoint = &(_points[0]);
+    const Point *currentPoint = &(_complexPoints[0]);
     if (_numberOfPointsInHull > 1)
     {
         for (int i = 0; i < _numberOfPointsInHull+1; ++i)
@@ -171,7 +165,7 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
     p.setCapStyle(Qt::RoundCap);
     p.setColor(Qt::red);
     painter.setPen(p);
-    for (const QPoint &pt : _rawPoints)
+    for (const QPoint &pt : _points)
     {
         painter.drawPoint(pt);
     }
@@ -182,7 +176,7 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
 //-----------------------------------------------------------------------------
 void IncrementalInsertion::runNaiveAlgorithm()
 {
-
+    ConvexHull::runNaiveAlgorithm();
 }
 
 //-----------------------------------------------------------------------------
@@ -217,4 +211,12 @@ bool IncrementalInsertion::_compare(const QPoint &p1, const QPoint &p2)
             return false;
         }
     }
+}
+
+//-----------------------------------------------------------------------------
+// getConvexHullTest
+//-----------------------------------------------------------------------------
+std::vector<QPoint> IncrementalInsertion::getConvexHullTest() const
+{
+    return ConvexHull::convexHullTest();
 }

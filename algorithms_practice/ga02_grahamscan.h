@@ -1,47 +1,34 @@
 #ifndef GA02_CONVEXHULL_H
 #define GA02_CONVEXHULL_H
 
-#include "algorithmbase.h"
+#include "convexhull.h"
 
 #include <set>
 #include <functional>
 
-class GrahamScan : public AlgorithmBase
+class GrahamScan : public ConvexHull
 {
 public:
     GrahamScan(QWidget *pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
 
 public:
-    // AlgorithmBase interface
     /*Optimalni algoritam za izracunavanje konveksnog omotaca - Graham scan - O(nlogn)*/
     void runAlgorithm();
-
     void drawAlgorithm(QPainter &painter) const;
-
-    /* Algoritam grube sile O(n^3)*/
     void runNaiveAlgorithm();
 
     std::vector<QPoint> convexHullTest() const;
-
     std::vector<QPoint> convexHull() const;
 
 private:
     /* Funckija poredjenja za std::sort */
     bool compare(const QPoint& p1, const QPoint& p2);
 
+    /* Najdesnija tacka */
+    QPoint _firstPoint;
 
-private:
-     /*Ulazni podaci*/
-     std::vector<QPoint> _points;
-
-     /* Najdesnija tacka*/
-     QPoint _firstPoint;
-
-     /* Konveksni omotac izracunat optimalnim algoritmom */
-     std::vector<QPoint> _convexHull;
-
-     /* Konveksni omotac izracunat algoritmom grube sile */
-     std::vector<QPoint> _convexHullTest;
+    /* Konveksni omotac izracunat optimalnim algoritmom */
+    std::vector<QPoint> _convexHull;
 };
 
 #endif // GA02_CONVEXHULL_H

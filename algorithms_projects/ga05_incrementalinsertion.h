@@ -1,7 +1,7 @@
 #ifndef GA00_INCREMENTALINSERTION_H
 #define GA00_INCREMENTALINSERTION_H
 
-#include "algorithmbase.h"
+#include "algorithms_practice/convexhull.h"
 
 class Point;
 
@@ -9,7 +9,7 @@ class Point;
 //-----------------------------------------------------------------------------
 // Incremental insertion
 //-----------------------------------------------------------------------------
-class IncrementalInsertion : public AlgorithmBase
+class IncrementalInsertion : public ConvexHull
 {
 public:
     IncrementalInsertion(QWidget *pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
@@ -18,12 +18,13 @@ public:
     void drawAlgorithm(QPainter &painter) const;
     void runNaiveAlgorithm();
 
+    std::vector<QPoint> getConvexHullTest() const;
+
 private:
     int _xPositionOfSweepline;
     int _numberOfPointsInHull;
     bool _hasProblematicPoints;
-    std::vector<QPoint> _rawPoints;
-    std::vector<Point> _points;
+    std::vector<Point> _complexPoints;
 
     bool _compare(const QPoint& p1, const QPoint& p2);
     bool _whichSide(QPoint x, QPoint x1, QPoint x2);

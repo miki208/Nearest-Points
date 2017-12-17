@@ -32,20 +32,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setWindowTitle("Geometrijski algoritmi @ MATF");
 
-    ui->algorithmType->addItem("SA CASOVA VEZBI:", QVariant(EMPTY_PRACTICE));
+    ui->algorithmType->addItem("SA ČASOVA VEŽBI:", QVariant(EMPTY_PRACTICE));
     ui->algorithmType->addItem("Demonstacija iscrtavanja", QVariant(DRAW_POLYGON));
-    ui->algorithmType->addItem("Brisuca prava mini demo", QVariant(SWEEP_LINE));
-    ui->algorithmType->addItem("Konveksni omotac (Graham scan)", QVariant(GRAHAM_SCAN));
-    ui->algorithmType->addItem("Preseci duzi", QVariant(LINE_SEGMENT_INTERSECTION));
-    ui->algorithmType->addItem("DCEL Demo", QVariant(DCEL_DEMO));
+    ui->algorithmType->addItem("Brišuća prava (mini demo)", QVariant(SWEEP_LINE));
+    ui->algorithmType->addItem("Konveksni omotač (Graham scan)", QVariant(GRAHAM_SCAN));
+    ui->algorithmType->addItem("Preseci duži", QVariant(LINE_SEGMENT_INTERSECTION));
+    ui->algorithmType->addItem("DCEL (demo)", QVariant(DCEL_DEMO));
     ui->algorithmType->addItem("Triangulacija", QVariant(TRIANGULATION));
 
     ui->algorithmType->insertSeparator(MAX_PRACTICE);
 
     ui->algorithmType->addItem("STUDENTSKI PROJEKTI:", QVariant(EMPTY_PROJECTS));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [START]*/
-    ui->algorithmType->addItem("Odredjivanje dve najblize tacke u ravni", QVariant(NEAREST_POINTS));
-    ui->algorithmType->addItem("Konveksni omotač (brišuća prava)", QVariant(INCREMENTAL_INSERTION));
+    ui->algorithmType->addItem("Određivanje dve najbliže tačke u ravni", QVariant(NEAREST_POINTS));
+    ui->algorithmType->addItem("Konveksni omotač (metod brišuće prave)", QVariant(INCREMENTAL_INSERTION));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
