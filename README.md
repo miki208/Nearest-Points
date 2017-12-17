@@ -8,24 +8,23 @@ Asistent: Aleksandra Kocić [www.matf.bg.ac.rs/~aleksandra_kocic]
 Studenti:
 * 
 
-## Uputstvo za studente ##
+## Uputstvo za studente
 
-### Inicijalna podešavanja ###
+### Inicijalna podešavanja
 
 * Instalirati Qt i git
 * Napraviti nalog na bitbucket-u
 * Upisati nalog u tabelu: ```https://docs.google.com/spreadsheets/d/17a4MRa9qIeUMygo92MOwqKnVV9_ELblfVLKhSmJhY0c/edit#gid=0 ``` (bez obzira što još uvek nemate izabrane projekte, upišite ime, prezime i korisničko ime)
 * Napraviti folder na lokalnom računaru, pozicionirati se u folder i klonirati repozirotijum komandom ```git clone https://bitbucket.org/ga1718team/algorithms.git ```
 
-### Unit testovi ### 
+### Unit testovi
  Prezentacija sa časa: http://poincare.matf.bg.ac.rs/~asimic/2017/ga/7/UnitTests.pdf \
  Na kraju prezentacije su date sve informacije o integraciji unit testova sa nasim projektom. \
 
-### Link do šablona za projektnu dokumentaciju ###
+### Link do šablona za projektnu dokumentaciju
 https://docs.google.com/document/d/10zCuGxrLbyux7fsQ6qOlZkl4rErQndfw06WiUanXnGs/edit?usp=sharing
 
-### Struktura direktorijuma ###
-
+### Struktura direktorijuma
   * algorithms_practice [Sadrži primere sa časova vežbi]
     * ga00_alg1.cpp
     * ga00_alg1.h
