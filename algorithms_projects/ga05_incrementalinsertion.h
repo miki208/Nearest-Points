@@ -21,6 +21,7 @@ public:
 private:
     int _xPositionOfSweepline;
     int _numberOfPointsInHull;
+    bool _hasProblematicPoints;
     std::vector<QPoint> _rawPoints;
     std::vector<Point> _points;
 

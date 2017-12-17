@@ -1,6 +1,7 @@
 #include <QPainter>
 
 #include "ga05_incrementalinsertion.h"
+#include "../algorithms_practice/ga02_convexhull.h"
 #include "utils.h"
 
 
@@ -8,7 +9,7 @@
 // Incremental insertion
 //-----------------------------------------------------------------------------
 IncrementalInsertion::IncrementalInsertion(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase {pRenderer, delayMs}, _xPositionOfSweepline(0), _numberOfPointsInHull(0)
+    : AlgorithmBase {pRenderer, delayMs}, _xPositionOfSweepline(0), _numberOfPointsInHull(0), _hasProblematicPoints(true)
 {
     if (filename == "")
         _rawPoints = generateRandomPoints(inputSize);
@@ -16,6 +17,7 @@ IncrementalInsertion::IncrementalInsertion(QWidget *pRenderer, int delayMs, std:
         _rawPoints = readPointsFromFile(filename);
 }
 
+#include <QDebug>
 //-----------------------------------------------------------------------------
 // runAlgorithm
 //-----------------------------------------------------------------------------
@@ -25,11 +27,11 @@ void IncrementalInsertion::runAlgorithm()
     std::sort(_rawPoints.begin(), _rawPoints.end(), [&](const QPoint& lhs, const QPoint& rhs){ return _compare(lhs, rhs); });
 
     // create complex points
-    _points.clear();
     for (const QPoint &p : _rawPoints)
     {
         _points.push_back(Point(p));
     }
+
     AlgorithmBase_updateCanvasAndBlock();
 
     // init
@@ -48,8 +50,33 @@ void IncrementalInsertion::runAlgorithm()
     ++_numberOfPointsInHull;
     AlgorithmBase_updateCanvasAndBlock();
 
+    Point *firstProblematicPoint = nullptr;
+    if (_points[0].getValue().x() == _points[1].getValue().x())
+    {
+        firstProblematicPoint = &_points[0];
+    }
+    else
+    {
+        _hasProblematicPoints = false;
+    }
+
     for (int i = 2; i < _points.size(); ++i)
     {
+        if (_hasProblematicPoints)
+        {
+            if (_points[i].getValue().x() == _points[i-1].getValue().x())
+            {
+                _points[i].setNextPoint(firstProblematicPoint);
+                _points[i].setPrevPoint(&_points[i-1]);
+                firstProblematicPoint->setPrevPoint(&_points[i]);
+                _points[i-1].setNextPoint(&_points[i]);
+
+                continue;
+            }
+
+            _hasProblematicPoints = false;
+        }
+
         ++_numberOfPointsInHull;
         _xPositionOfSweepline = _points[i].getValue().x();
 
@@ -120,8 +147,8 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
     QPen p = painter.pen();
 
     // draw sweep line
-    p.setWidth(2);
-    p.setColor(QColor(180, 180, 180));
+    p.setWidth(1);
+    p.setColor(QColor(30, 100, 255));
     painter.setPen(p);
     painter.drawLine(_xPositionOfSweepline, 0, _xPositionOfSweepline, _pRenderer->height());
 
@@ -140,7 +167,7 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
     }
 
     // draw points
-    p.setWidth(10);
+    p.setWidth(4);
     p.setCapStyle(Qt::RoundCap);
     p.setColor(Qt::red);
     painter.setPen(p);
@@ -159,7 +186,7 @@ void IncrementalInsertion::runNaiveAlgorithm()
 }
 
 //-----------------------------------------------------------------------------
-// whichSide
+// _whichSide
 //-----------------------------------------------------------------------------
 bool IncrementalInsertion::_whichSide(QPoint x, QPoint x1, QPoint x2)
 {
@@ -171,5 +198,23 @@ bool IncrementalInsertion::_whichSide(QPoint x, QPoint x1, QPoint x2)
 //-----------------------------------------------------------------------------
 bool IncrementalInsertion::_compare(const QPoint &p1, const QPoint &p2)
 {
-    return (p1.x() < p2.x()) ? true : false;
+    if (p1.x() < p2.x())
+    {
+        return true;
+    }
+    else if (p1.x() > p2.x())
+    {
+        return false;
+    }
+    else
+    {
+        if (p1.y() < p2.y())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

@@ -26,7 +26,7 @@ QT_CHARTS_USE_NAMESPACE
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    _pAlgorithm{nullptr}, _delayMs{500}
+    _pAlgorithm{nullptr}, _delayMs{500}     // (default: 500)
 {
     ui->setupUi(this);
 
