@@ -39,11 +39,20 @@ void ConvexHull::runAlgorithm()
     _convexHull.push_back(_firstPoint);
     AlgorithmBase_updateCanvasAndBlock();
 
-    _convexHull.push_back(_points[0]);
-    AlgorithmBase_updateCanvasAndBlock();
+    int m=1, k;
+    if(_points[0] != _firstPoint)
+    {
+        _convexHull.push_back(_points[0]);
+        k=1;
+    }
+    else
+    {
+        _convexHull.push_back(_points[1]);
+        k=2;
+    }
 
-    int m = 1;
-    for(int k =1 ;k < _points.size(); k++)
+    AlgorithmBase_updateCanvasAndBlock();
+    for(;k < _points.size(); k++)
     {
         _convexHull.push_back(_points[k]);
         AlgorithmBase_updateCanvasAndBlock();
@@ -159,4 +168,14 @@ bool ConvexHull::compare(const QPoint &p1, const QPoint &p2)
         return angle1 < angle2;
     else
         return utils::distance(p1, _firstPoint) < utils::distance(p2, _firstPoint);
+}
+
+std::vector<QPoint> ConvexHull::convexHullTest() const
+{
+    return _convexHullTest;
+}
+
+std::vector<QPoint> ConvexHull::convexHull() const
+{
+    return _convexHull;
 }
