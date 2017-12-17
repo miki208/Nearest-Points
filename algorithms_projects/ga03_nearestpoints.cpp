@@ -14,7 +14,7 @@ NearestPoints::NearestPoints(QWidget *pRenderer, int delayMs, std::string filena
     if(_points.size() < 2) {
         _status = AlgorithmStatus::INVALID_INPUT;
     } else {
-        _status = AlgorithmStatus::OK;
+        _status = AlgorithmStatus::CORRECT_INPUT;
     }
 
     _localNearestPairs = {};
@@ -41,8 +41,12 @@ void NearestPoints::runAlgorithm()
 
     QPair<QPoint, QPoint> nearestPair;
     findNearestPoints(0, _points.size(), nearestPair); //O(nlogn) - T(N) = 2T(N/2) + cN
-    if(_destroyAnimation)
+    if(_destroyAnimation) {
+        _status = AlgorithmStatus::FAIL;
         return;
+    } else {
+        _status = AlgorithmStatus::OK;
+    }
 
     _nearestPair = nearestPair;
 
@@ -303,7 +307,7 @@ void NearestPoints::setPoints(const std::vector<QPoint> &points)
     if(points.size() < 2)
         _status = AlgorithmStatus::INVALID_INPUT;
     else
-        _status = AlgorithmStatus::OK;
+        _status = AlgorithmStatus::CORRECT_INPUT;
 
     _points = points;
 }

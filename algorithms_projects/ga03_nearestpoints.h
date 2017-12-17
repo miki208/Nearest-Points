@@ -6,7 +6,7 @@
 class NearestPoints : public AlgorithmBase
 {
 public:
-    enum AlgorithmStatus {OK, INVALID_INPUT};
+    enum AlgorithmStatus {OK, FAIL, CORRECT_INPUT, INVALID_INPUT};
 
     NearestPoints(QWidget* pRenderer, int delayMs, std::string filename = "", int inputSize = DEFAULT_POINTS_NUM);
 
