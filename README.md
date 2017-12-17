@@ -17,6 +17,13 @@ Studenti:
 * Upisati nalog u tabelu: ```https://docs.google.com/spreadsheets/d/17a4MRa9qIeUMygo92MOwqKnVV9_ELblfVLKhSmJhY0c/edit#gid=0 ``` (bez obzira što još uvek nemate izabrane projekte, upišite ime, prezime i korisničko ime)
 * Napraviti folder na lokalnom računaru, pozicionirati se u folder i klonirati repozirotijum komandom ```git clone https://bitbucket.org/ga1718team/algorithms.git ```
 
+### Unit testovi ### 
+ Prezentacija sa časa: http://poincare.matf.bg.ac.rs/~asimic/2017/ga/7/UnitTests.pdf \
+ Na kraju prezentacije su date sve informacije o integraciji unit testova sa nasim projektom. \
+
+### Link do šablona za projektnu dokumentaciju ###
+https://docs.google.com/document/d/10zCuGxrLbyux7fsQ6qOlZkl4rErQndfw06WiUanXnGs/edit?usp=sharing
+
 ### Struktura direktorijuma ###
 
   * algorithms_practice [Sadrži primere sa časova vežbi]
@@ -35,7 +42,19 @@ Studenti:
     * ga02_temaDrugogStudentaIzTabele.h
     * ...
     * ...   
-  * ostali falovi 
+  * docs [Sadrži projektnu dokumentaciju]
+    * ga00_convexHull.docx
+    * ga00_convexHull.pdf
+    * ga01_temaPrvogStudenta.docx
+    * ga01_temaPrvogStudenta.pdf
+    *...
+    *...
+    * ga25_temaPoslednjegStudenta.docx
+    * ga25_temaPoslednjegStudenta.pdf
+  * input_files [Sadrži foldere sa raznim unapred zadatim ulazima za Vaše algoritme] 
+    * ga01_temaPrvogStudenta
+    *...
+    * ga25_temaPoslednjegStudenta 
 
 ### Osnovne komande
 * **git pull** - da prevučete trenutni kod 
