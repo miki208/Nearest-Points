@@ -39,6 +39,7 @@ public:
         NEAREST_POINTS,
         INCREMENTAL_INSERTION,
         QUICK_HULL,
+        QUADTREE,
         /* Ovde se ubacuju enum-i za studentske projekte
          * (nije potrebno navoditi konkretne brojeve)
         */

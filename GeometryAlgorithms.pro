@@ -41,7 +41,8 @@ SOURCES += \
     algorithms_projects/ga05_incrementalinsertion.cpp \
     algorithms_practice/ga02_grahamscan.cpp \
     algorithms_practice/convexhull.cpp \
-    algorithms_projects/ga05_quickhull.cpp
+    algorithms_projects/ga05_quickhull.cpp \
+    algorithms_projects/ga16_quadtree.cpp
 
 	
 HEADERS += \
@@ -64,7 +65,8 @@ HEADERS += \
     algorithms_projects/ga05_incrementalinsertion.h \
     algorithms_practice/ga02_grahamscan.h \
     algorithms_practice/convexhull.h \
-    algorithms_projects/ga05_quickhull.h
+    algorithms_projects/ga05_quickhull.h \
+    algorithms_projects/ga16_quadtree.h
 
 FORMS += \
         mainwindow.ui

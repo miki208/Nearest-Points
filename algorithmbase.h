@@ -29,6 +29,7 @@
 #include <QPainter>
 
 #include <vector>
+#include <ctime>
 
 #define AlgorithmBase_updateCanvasAndBlock() \
     if(!_pThread) \
