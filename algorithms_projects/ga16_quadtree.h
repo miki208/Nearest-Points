@@ -19,6 +19,7 @@ class Item : public Bounds
 public:
     Item(int x, int y, int width, int height) : Bounds(x, y, width, height)
         {}
+    bool hasCollision(Item *i);
 };
 
 class Node{
@@ -45,15 +46,17 @@ public:
 class Quadtree : public AlgorithmBase
 {
 public:
-    Quadtree(QWidget* pRenderer, int delayMs, std::string filename = "");
-
+    Quadtree(QWidget* pRenderer, int delayMs, std::string filename = "",
+             int inputSize = DEFAULT_POINTS_NUM);
     // AlgorithmBase interface
 public:
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
     void runNaiveAlgorithm();
-    static const int maxChildren = 4; // Max number of children a ndoe can contain before it's split
-    static const int maxDepth = 4; // Max number of levels a quadtree can create
+    static const int maxChildren = 1; // Max number of children a ndoe can contain before it's split
+    static const int maxDepth = 5; // Max number of levels a quadtree can create
+    static const int lineWidth = 25;
+    static void getDepthColor(int depth, int &red, int &green, int &blue);
 private:
     std::vector<QPoint> points;
     std::vector<Item*> allItems;
@@ -61,7 +64,8 @@ private:
     Node *root; // Root node of a quadtree
     bool insertingFinished;
     Item *collider;
-    std::vector<Item*> collidesWith;
+    std::vector<Item*> collisionCandidates;
+    void checkCollision(Item *i, std::vector<Item*> &checkWith, std::vector<Item*> &result);
 };
 
 #endif // GA16_QUADTREE_H

@@ -11,6 +11,7 @@
 #include "algorithms_projects/ga03_nearestpoints.h"
 #include "algorithms_projects/ga05_incrementalinsertion.h"
 #include "algorithms_projects/ga05_quickhull.h"
+#include "algorithms_projects/ga16_quadtree.h"
 
 TimeMeasurementThread::TimeMeasurementThread(int algorithmType, int minValue, int step, int maxValue)
     :QThread (), _algorithmType(algorithmType), _minValue(minValue), _step(step), _maxValue(maxValue)
@@ -51,6 +52,9 @@ void TimeMeasurementThread::run()
                 break;
             case MainWindow::QUICK_HULL:
                 pAlgorithm = new QuickHull(nullptr, 0, "", i);
+                break;
+            case MainWindow::QUADTREE:
+                pAlgorithm = new Quadtree(nullptr, 0, "", i);
                 break;
         }
 
