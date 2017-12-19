@@ -53,7 +53,7 @@ public:
     void runAlgorithm();
     void drawAlgorithm(QPainter &painter) const;
     void runNaiveAlgorithm();
-    static const int maxChildren = 1; // Max number of children a ndoe can contain before it's split
+    static const int maxChildren = 2; // Max number of children a node can contain before it's split
     static const int maxDepth = 5; // Max number of levels a quadtree can create
     static const int lineWidth = 25;
     static void getDepthColor(int depth, int &red, int &green, int &blue);

@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Određivanje dve najbliže tačke u ravni", QVariant(NEAREST_POINTS));
     ui->algorithmType->addItem("Konveksni omotač (Incremental insertion)", QVariant(INCREMENTAL_INSERTION));
     ui->algorithmType->addItem("Konveksni omotač (QuickHull) - under construction", QVariant(QUICK_HULL));
-    ui->algorithmType->addItem("Quadtree provera kolizije TODO", QVariant(QUADTREE));
+    ui->algorithmType->addItem("Quadtree provera kolizije", QVariant(QUADTREE));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 

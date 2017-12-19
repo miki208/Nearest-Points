@@ -2,9 +2,7 @@
 
 Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
     : AlgorithmBase(pRenderer, delayMs), insertingFinished(false)
-    // DEBUG easier testing with small delay
 {
-    // Q_UNUSED(delayMs);
     if(filename == "")
         points = generateRandomPoints(inputSize);
     else
@@ -46,10 +44,13 @@ void Quadtree::runAlgorithm()
         AlgorithmBase_updateCanvasAndBlock();
 
     }
-    // checking collision of an element
+    // display checking collision of an element
     insertingFinished = true;
-//    collider = allItems[0];
-//    collisionCandidates = root->retrieve(collider);
+    if(_pRenderer){
+        collider = allItems[0];
+        collisionCandidates = root->retrieve(collider);
+    }
+
     AlgorithmBase_updateCanvasAndBlock();
     emit animationFinished();
 
@@ -74,6 +75,8 @@ void Quadtree::drawAlgorithm(QPainter &painter) const
     if (!insertingFinished){
         return;
     }
+
+    // draw an item for which we are checking collision
     QPen p;
     p.setWidth(20);
     p.setColor(Qt::GlobalColor::green);
@@ -83,9 +86,10 @@ void Quadtree::drawAlgorithm(QPainter &painter) const
                      Qt::GlobalColor::green);
     painter.drawPoint(collider->x, collider->y);
 
-    qDebug() << "broj collides with = " << collisionCandidates.size();
+    // qDebug() << "broj collides with = " << collisionCandidates.size();
     p.setColor(Qt::GlobalColor::red);
 
+    // draw all items that are maybe colliding with collider
     painter.setPen(p);
     for (auto c : collisionCandidates){
         painter.fillRect(c->x, c->y, c->h, c->w, Qt::GlobalColor::red);
