@@ -57,10 +57,13 @@ public:
     static const int maxDepth = 5; // Max number of levels a quadtree can create
     static const int lineWidth = 25;
     static void getDepthColor(int depth, int &red, int &green, int &blue);
+    void setPoints(const std::vector<QPoint> &points);
+    int result();
 private:
     std::vector<QPoint> points;
     std::vector<Item*> allItems;
 
+    int numOfCollisions;
     Node *root; // Root node of a quadtree
     bool insertingFinished;
     Item *collider;
