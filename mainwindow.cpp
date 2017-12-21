@@ -22,6 +22,7 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithms_projects/ga03_nearestpoints.h"
 #include "algorithms_projects/ga05_incrementalinsertion.h"
 #include "algorithms_projects/ga05_quickhull.h"
+#include "algorithms_projects/ga15_pointrobotshortestpath.h"
 #include "algorithms_projects/ga16_quadtree.h"
 #include "config.h"
 
@@ -49,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Određivanje dve najbliže tačke u ravni", QVariant(NEAREST_POINTS));
     ui->algorithmType->addItem("Konveksni omotač (Incremental insertion)", QVariant(INCREMENTAL_INSERTION));
     ui->algorithmType->addItem("Konveksni omotač (QuickHull) - under construction", QVariant(QUICK_HULL));
+    //ui->algorithmType->addItem("Odredjivanje najkraceg puta sa obilazenjem prepreka za tackastog robota", QVariant(POINT_ROBOT_SHORTEST_PATH));
     ui->algorithmType->addItem("Quadtree provera kolizije", QVariant(QUADTREE));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
@@ -162,6 +164,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             break;
         case QUICK_HULL:
             _pAlgorithm = new QuickHull(_renderArea, _delayMs, _filename);
+            break;
+        case POINT_ROBOT_SHORTEST_PATH:
+            _pAlgorithm = new PointRobotShortestPath(_renderArea, _delayMs, _filename);
             break;
         case QUADTREE:
             _pAlgorithm = new Quadtree(_renderArea, _delayMs, _filename);
