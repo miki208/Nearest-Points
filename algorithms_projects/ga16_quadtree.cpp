@@ -1,46 +1,46 @@
 #include "ga16_quadtree.h"
+Quadtree *Node::parent;
 
 Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase(pRenderer, delayMs), insertingFinished(false)
+    : AlgorithmBase(pRenderer, 11), insertingFinished(false)
 {
+    std::vector<QPoint> points_;
     if(filename == "")
-        points = generateRandomPoints(inputSize);
+        points_ = generateRandomPoints(311);
     else
-        points = readPointsFromFile(filename);
+        points_ = readPointsFromFile(filename);
     if (pRenderer){
+        squareSize = _pRenderer->height() / 30;
         Bounds b(0, 0, _pRenderer->width(), pRenderer->height());
         root = new Node(b, 1);
     } else {
+        squareSize = 1;
         Bounds b(0, 0, 1200, 500);
         root = new Node(b, 1);
     }
-
-    if (points.size() == 0){
-        return;
-    }
-    // add one duplicate so we get a collision
-    points.push_back(points[0]);
-    allItems.reserve(points.size());
-
-    for (QPoint &p : points){
-        allItems.push_back(new Item(p.x(), p.y(), 0, 0));
-    }
+    Node::parent = this;
+    setPoints(points_);
 }
+
 void Quadtree::setPoints(const std::vector<QPoint> &points_)
 {
     points = points_;
     allItems.resize(0);
+    allItems.reserve(points.size());
+    hadCollision.resize(points.size());
+    clearResult();
+    int i = 0;
     for (QPoint &p : points){
-        allItems.push_back(new Item(p.x(), p.y(), 0, 0));
+        allItems.push_back(new Item(p.x(), p.y(), squareSize, squareSize, i++));
     }
 }
 
 void Quadtree::runAlgorithm()
 {
-    numOfCollisions = 0;
+    clearResult();
     // building a quadtree
     for (Item * item : allItems) {
-        root->insert(item);
+        root->insert(item, true);
         AlgorithmBase_updateCanvasAndBlock();
 
     }
@@ -52,26 +52,16 @@ void Quadtree::runAlgorithm()
     }
 
     AlgorithmBase_updateCanvasAndBlock();
+    AlgorithmBase_updateCanvasAndBlock();
     emit animationFinished();
-
-    // count collisions
-    std::vector<Item*> result;
-    for (Item *i : allItems){
-        result.resize(0);
-        collider = i;
-        collisionCandidates = root->retrieve(collider);
-        checkCollision(collider, collisionCandidates, result);
-        numOfCollisions += result.size();
-       // qDebug() << "good alg:" << result.size();
-    }
-   // qDebug() << numOfCollisions;
+    // qDebug() << result();
 }
 
 void Quadtree::drawAlgorithm(QPainter &painter) const
 {
     root->drawSelf(painter);
 
-    // Get all collisions of an item
+    // Display collision candidates of one item
     if (!insertingFinished){
         return;
     }
@@ -84,21 +74,23 @@ void Quadtree::drawAlgorithm(QPainter &painter) const
 
     painter.fillRect(collider->x, collider->y, collider->h, collider->w,
                      Qt::GlobalColor::green);
-    painter.drawPoint(collider->x, collider->y);
+    // painter.drawPoint(collider->x, collider->y);
 
-    // qDebug() << "broj collides with = " << collisionCandidates.size();
-    p.setColor(Qt::GlobalColor::red);
-
-    // draw all items that are maybe colliding with collider
+    // draw all items that may be colliding with collider
     painter.setPen(p);
     for (auto c : collisionCandidates){
-        painter.fillRect(c->x, c->y, c->h, c->w, Qt::GlobalColor::red);
-        p.setWidth(3);
-        painter.setPen(p);
-        painter.drawLine(collider->x, collider->y, c->x, c->y);
-        p.setWidth(10);
-        painter.setPen(p);
-        painter.drawPoint(c->x, c->y);
+        if (c == collider)
+            continue;
+        if (collider->hasCollision(c))
+            painter.fillRect(c->x, c->y, c->h, c->w, Qt::GlobalColor::red);
+        else
+            painter.fillRect(c->x, c->y, c->h, c->w, Qt::GlobalColor::yellow);
+        // p.setWidth(3);
+        // painter.setPen(p);
+        // painter.drawLine(collider->x, collider->y, c->x, c->y);
+        // p.setWidth(10);
+        // painter.setPen(p);
+        // painter.drawPoint(c->x, c->y);
     }
 }
 
@@ -124,10 +116,7 @@ void Quadtree::getDepthColor(int depth, int &red, int &green, int &blue)
         break;
     }
 }
-int Quadtree::result()
-{
-    return numOfCollisions;
-}
+
 
 void Node::drawSelf(QPainter &painter)
 {
@@ -143,7 +132,7 @@ void Node::drawSelf(QPainter &painter)
     }
 
 
-    p.setColor(QColor::fromRgb(10, 30, 170));
+    p.setColor(QColor::fromRgb(10, 30, 33));
     p.setWidth(5);
     painter.setPen(p);
 
@@ -172,15 +161,15 @@ void Node::drawSelf(QPainter &painter)
 
 void Quadtree::runNaiveAlgorithm()
 {
-    numOfCollisions = 0;
-    std::vector<Item*> result;
-    for (Item *i : allItems){
-        result.resize(0);
-        collider = i;
-        collisionCandidates = allItems;
-        checkCollision(collider, collisionCandidates, result);
-        numOfCollisions += result.size();
-       // qDebug() << "naive:" << result.size();
+    clearResult();
+    for(unsigned i = 0; i < allItems.size(); i++){
+        for (unsigned j = i + 1; j < allItems.size(); j++){
+            Item *a = allItems[i];
+            Item *b = allItems[j];
+            if (a->hasCollision(b)){
+                addCollision(a, b);
+            }
+        }
     }
 }
 
@@ -194,8 +183,6 @@ void Quadtree::checkCollision(Item *i, std::vector<Item*> &checkWith,
     }
 }
 
-
-
 Node::Node(Bounds &bounds, int depth) : bounds(bounds), depth(depth), isLeafNode(true)
 {}
 
@@ -205,7 +192,7 @@ Node::Node(int x, int y, int width, int height, int depth) : bounds(x, y, width,
 
 std::vector<Item*> Node::retrieve(Item *item)
 {
-    std::vector<Item*> result; // TODO calc init len
+    std::vector<Item*> result;
     retrieve(item, result);
     return result;
 }
@@ -221,25 +208,37 @@ void Node::retrieve(Item *item, std::vector<Item*> &result)
         result.insert(result.end(), children.begin(), children.end());
         return;
     }
-    nodes[findQuadrant(item)]->retrieve(item, result);
+    std::vector <Node::Quadrant> qu = findQuadrants(item);
+    for (auto q : qu){
+        nodes[q]->retrieve(item, result);
+    }
 }
 
-void Node::insert(Item *item)
+void Node::insert(Item *item, bool count)
 {
     if (isLeafNode){
         if (depth < Quadtree::maxDepth && children.size() >= Quadtree::maxChildren){
             split();
             for (auto c : children){
-                insert(c);
+                insert(c, false);
             }
             children.resize(0);
-            insert(item);
+            insert(item, count);
         } else {
+            if (count){
+                for(auto c : children){
+                    if (item->hasCollision(c)){
+                        parent->addCollision(item, c);
+                    }
+                }
+            }
             children.push_back(item);
         }
     } else {
-        Quadrant q = findQuadrant(item);
-        nodes[q]->insert(item);
+        std::vector<Quadrant> qu = findQuadrants(item);
+        for (auto q : qu){
+            nodes[q]->insert(item, count);
+        }
     }
 }
 
@@ -264,29 +263,57 @@ void Node::split()
     nodes[DownLeft] = new Node(bounds.x, yMid, width, height, depth + 1);
 }
 
-Node::Quadrant Node::findQuadrant(Item *item)
+std::vector<Node::Quadrant> Node::findQuadrants(Item *item)
 {
-    bool right = bounds.x + bounds.w / 2 < item->x;
-    bool up = bounds.y + bounds.h / 2 > item->y;
-
-    Quadrant q;
+    int midX = bounds.x + bounds.w / 2;
+    int midY = bounds.y + bounds.h / 2;
+    bool right = midX <= item->x + item->w;
+    bool left = midX >= item->x;
+    bool up = midY >= item->y;
+    bool down = midY <= item->y + item->h;
+    std::vector<Quadrant> result;
     if (right){
         if (up)
-            q = Quadrant::UpRight;
-        else
-            q = Quadrant::DownRight;
-    } else {
+            result.push_back(Quadrant::UpRight);
+        if (down)
+            result.push_back(Quadrant::DownRight);
+    }
+    if (left){
         if (up)
-            q = Quadrant::UpLeft;
-        else
-            q = Quadrant::DownLeft;
+            result.push_back(Quadrant::UpLeft);
+        if (down)
+            result.push_back(Quadrant::DownLeft);
     }
 
-    return q;
+    return result;
 }
 
 bool Item::hasCollision(Item *i)
 {
     return x <= i->x + i->w && x + w >= i->x
             && y <= i->y + i->h && y + h >= i->y;
+}
+
+void Quadtree::addCollision(Item *a, Item *b)
+{
+    // collisions.insert(std::make_pair(std::make_pair(a, b), 0));
+    // collisions.insert(std::make_pair(a,b));
+    hadCollision[a->number] = true;
+    hadCollision[b->number] = true;
+}
+
+void Quadtree::setSquareSize(int size)
+{
+    squareSize = size;
+}
+
+void Quadtree::clearResult()
+{
+    std::fill(hadCollision.begin(), hadCollision.end(), false);
+}
+
+// returns the number of items that are colliding
+int Quadtree::result()
+{
+    return std::count(hadCollision.begin(), hadCollision.end(), true);
 }
