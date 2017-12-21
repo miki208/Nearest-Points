@@ -43,7 +43,8 @@ SOURCES += \
     algorithms_practice/convexhull.cpp \
     algorithms_projects/ga05_quickhull.cpp \
     algorithms_projects/ga16_quadtree.cpp \
-    algorithms_projects/ga15_pointrobotshortestpath.cpp
+    algorithms_projects/ga15_pointrobotshortestpath.cpp \
+    algorithms_projects/ga21_fixedradiuscircle.cpp
 
 	
 HEADERS += \
@@ -68,7 +69,8 @@ HEADERS += \
     algorithms_practice/convexhull.h \
     algorithms_projects/ga05_quickhull.h \
     algorithms_projects/ga16_quadtree.h \
-    algorithms_projects/ga15_pointrobotshortestpath.h
+    algorithms_projects/ga15_pointrobotshortestpath.h \
+    algorithms_projects/ga021_fixedradiuscircle.h
 
 FORMS += \
         mainwindow.ui

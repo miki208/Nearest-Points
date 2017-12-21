@@ -41,6 +41,7 @@ public:
         QUICK_HULL,
         POINT_ROBOT_SHORTEST_PATH,
         QUADTREE,
+        FIXEDRADIUSCIRCLE,
         /* Ovde se ubacuju enum-i za studentske projekte
          * (nije potrebno navoditi konkretne brojeve)
         */
