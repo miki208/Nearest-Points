@@ -32,36 +32,21 @@ public:
     static const int NUM_OF_SUBNODES = 4;
     static Quadtree *parent;
     Node *nodes[NUM_OF_SUBNODES];
-    std::vector<Item*> children;
     Node(int x, int y, int width, int height, int depth);
     Node(Bounds &bounds, int depth);
     Bounds bounds;
-    int depth;
-    bool isLeafNode;
-    std::vector<Item*> retrieve(Item &item);
     std::vector<Item*> retrieve(Item *item);
+    std::vector<Node::Quadrant> findQuadrants(Item *item);
     void retrieve(Item *item, std::vector<Item*> &result);
     void insert(Item *item, bool count);
-    void drawSelf(QPainter &painter);
+    void drawSelf(QPainter &painter) const;
+    int depth;
+private:
     void split();
-    std::vector<Node::Quadrant> findQuadrants(Item *item);
-};
+    bool isLeafNode;
+    std::vector<Item*> children;
 
-// std doesn't hash pairs, so we have to inject it in std
-//namespace std
-//{
-//    template<> struct hash<std::pair<Item*, Item*>>
-//    {
-//        typedef std::pair<Item*, Item*> argument_type;
-//        typedef std::size_t result_type;
-//        result_type operator()(argument_type const& p) const noexcept
-//        {
-//            uintptr_t a = reinterpret_cast<uintptr_t>(p.first);
-//            uintptr_t b = reinterpret_cast<uintptr_t>(p.second);
-//            return (a & 0xFFFFFFFF) << 15 | (b & 0xFFFFFFFF);
-//        }
-//    };
-//}
+};
 
 class Quadtree : public AlgorithmBase
 {
@@ -76,23 +61,23 @@ public:
     static const int maxChildren = 2; // Max number of children a node can contain before it's split
     static const int maxDepth = 5; // Max number of levels a quadtree can create
     static const int lineWidth = 25;
-    static void getDepthColor(int depth, int &red, int &green, int &blue);
+    void getDepthColor(int depth, int &red, int &green, int &blue);
     void setPoints(const std::vector<QPoint> &points);
-    int result();
     void setSquareSize(int size);
     void addCollision(Item *a, Item *b);
+    int result();
 private:
-    std::vector<bool> hadCollision;
-    int squareSize = 30;
-    std::vector<QPoint> points;
-    std::vector<Item*> allItems;
-    // std::set<std::pair<Item*, Item*>> collisions;
-    Node *root; // Root node of a quadtree
-    bool insertingFinished;
-    Item *collider;
-    std::vector<Item*> collisionCandidates;
-    void checkCollision(Item *i, std::vector<Item*> &checkWith, std::vector<Item*> &result);
     void clearResult();
+    std::vector<bool> hadCollision; // if i-th element is colliding
+    std::vector<QPoint> points; // algorithm input
+    std::vector<Item*> allItems; // items made from points
+    // std::set<std::pair<Item*, Item*>> collisions;
+    std::vector<Item*> collisionCandidates; // show candidates on last draw
+    Item *collider; // focused item on last draw
+    Node *root; // Root node of a quadtree
+    bool insertingFinished; // drawing flag
+    int squareSize = 30;
+
 };
 
 #endif // GA16_QUADTREE_H

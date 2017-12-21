@@ -2,11 +2,15 @@
 Quadtree *Node::parent;
 
 Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase(pRenderer, 11), insertingFinished(false)
+    : AlgorithmBase(pRenderer, delayMs != 0 ? 10 : 0), insertingFinished(false)
 {
+    // tune delay and input size for demo
+    if (delayMs != 0){
+        inputSize = 333;
+    }
     std::vector<QPoint> points_;
     if(filename == "")
-        points_ = generateRandomPoints(311);
+        points_ = generateRandomPoints(inputSize);
     else
         points_ = readPointsFromFile(filename);
     if (pRenderer){
@@ -18,6 +22,8 @@ Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int in
         Bounds b(0, 0, 1200, 500);
         root = new Node(b, 1);
     }
+
+
     Node::parent = this;
     setPoints(points_);
 }
@@ -42,8 +48,8 @@ void Quadtree::runAlgorithm()
     for (Item * item : allItems) {
         root->insert(item, true);
         AlgorithmBase_updateCanvasAndBlock();
-
     }
+
     // display checking collision of an element
     insertingFinished = true;
     if(_pRenderer){
@@ -118,12 +124,12 @@ void Quadtree::getDepthColor(int depth, int &red, int &green, int &blue)
 }
 
 
-void Node::drawSelf(QPainter &painter)
+void Node::drawSelf(QPainter &painter) const
 {
     QPen p;
     int r, g, b;
     if (depth == 1){
-        Quadtree::getDepthColor(depth, r, g, b);
+        parent->getDepthColor(depth, r, g, b);
         p.setColor(QColor::fromRgb(r, g, b));
         p.setWidth(Quadtree::lineWidth);
         painter.setPen(p);
@@ -149,7 +155,7 @@ void Node::drawSelf(QPainter &painter)
         }
         // draw inner bounds
         p.setWidth(Quadtree::lineWidth / (depth + 1 ));
-        Quadtree::getDepthColor(depth, r, g, b);
+        parent->getDepthColor(depth, r, g, b);
         p.setColor(QColor::fromRgb(r, g, b));
         painter.setPen(p);
         painter.drawLine(bounds.x, bounds.y + bounds.h / 2,
@@ -173,15 +179,6 @@ void Quadtree::runNaiveAlgorithm()
     }
 }
 
-void Quadtree::checkCollision(Item *i, std::vector<Item*> &checkWith,
-                              std::vector<Item*> &result)
-{
-    for (Item *c : checkWith){
-        if (i->hasCollision(c) && c != i){
-            result.push_back(c);
-        }
-    }
-}
 
 Node::Node(Bounds &bounds, int depth) : bounds(bounds), depth(depth), isLeafNode(true)
 {}
@@ -195,11 +192,6 @@ std::vector<Item*> Node::retrieve(Item *item)
     std::vector<Item*> result;
     retrieve(item, result);
     return result;
-}
-
-std::vector<Item*> Node::retrieve(Item &item)
-{
-    return retrieve(&item);
 }
 
 void Node::retrieve(Item *item, std::vector<Item*> &result)
@@ -244,10 +236,6 @@ void Node::insert(Item *item, bool count)
 
 void Node::split()
 {
-    if (!isLeafNode){ // Debug
-        qDebug() << "ne bi trebalo da si ovde";
-        return;
-    }
     isLeafNode = false;
     int width =  bounds.w / 2;
     int height = bounds.h / 2;
