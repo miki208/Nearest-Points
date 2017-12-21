@@ -145,7 +145,7 @@ void Node::drawSelf(QPainter &painter) const
     // draw children
     for (Item *c : children){
         painter.drawRect(c->x, c->y, c->w, c->h);
-        painter.drawPoint(c->x, c->y);
+        // painter.drawPoint(c->x, c->y);
     }
 
     if (!isLeafNode){
