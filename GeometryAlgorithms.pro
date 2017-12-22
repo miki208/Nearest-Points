@@ -70,7 +70,7 @@ HEADERS += \
     algorithms_projects/ga05_quickhull.h \
     algorithms_projects/ga16_quadtree.h \
     algorithms_projects/ga15_pointrobotshortestpath.h \
-    algorithms_projects/ga021_fixedradiuscircle.h
+    algorithms_projects/ga21_fixedradiuscircle.h
 
 FORMS += \
         mainwindow.ui

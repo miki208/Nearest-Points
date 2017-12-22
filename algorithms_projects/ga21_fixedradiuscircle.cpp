@@ -1,4 +1,4 @@
-#include "ga021_fixedradiuscircle.h"
+#include "ga21_fixedradiuscircle.h"
 #include <QDebug>
 
 FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, std::string filename)

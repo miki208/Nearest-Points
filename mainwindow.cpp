@@ -24,7 +24,7 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithms_projects/ga05_quickhull.h"
 #include "algorithms_projects/ga15_pointrobotshortestpath.h"
 #include "algorithms_projects/ga16_quadtree.h"
-#include "algorithms_projects/ga021_fixedradiuscircle.h"
+#include "algorithms_projects/ga21_fixedradiuscircle.h"
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
