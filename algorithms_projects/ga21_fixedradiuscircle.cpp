@@ -1,11 +1,11 @@
 #include "ga21_fixedradiuscircle.h"
 #include <QDebug>
 
-FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius, std::string filename)
+FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius, std::string filename, int inputSize)
 :AlgorithmBase{pRenderer, delayMs}
 {
     if(filename == "") {
-        _points = generateRandomPoints();
+        _points = generateRandomPoints(inputSize);
     } else {
         _points = readPointsFromFile(filename);
     }

@@ -14,7 +14,7 @@
 class FixedRadiusCircle : public AlgorithmBase
 {
 public:
-    FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius, std::string filename = "");
+    FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius, std::string filename, int inputSize = DEFAULT_POINTS_NUM);
 
 public:
     void runAlgorithm();

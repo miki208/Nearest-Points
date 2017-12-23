@@ -12,6 +12,7 @@
 #include "algorithms_projects/ga05_incrementalinsertion.h"
 #include "algorithms_projects/ga05_quickhull.h"
 #include "algorithms_projects/ga16_quadtree.h"
+#include "algorithms_projects/ga21_fixedradiuscircle.h"
 
 TimeMeasurementThread::TimeMeasurementThread(int algorithmType, int minValue, int step, int maxValue)
     :QThread (), _algorithmType(algorithmType), _minValue(minValue), _step(step), _maxValue(maxValue)
@@ -55,6 +56,9 @@ void TimeMeasurementThread::run()
                 break;
             case MainWindow::QUADTREE:
                 pAlgorithm = new Quadtree(nullptr, 0, "", i);
+                break;
+            case MainWindow::FIXEDRADIUSCIRCLE:
+                pAlgorithm = new FixedRadiusCircle(nullptr, 0, 70, "", i);
                 break;
         }
 
