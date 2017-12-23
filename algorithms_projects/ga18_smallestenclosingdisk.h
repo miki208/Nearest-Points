@@ -2,7 +2,33 @@
 #define GA18_SMALLESTENCLOSINGDISK_H
 
 #include "algorithmbase.h"
+#include "utils.h"
+#include <QPointF>
+#include <QPoint>
 #include <vector>
+
+const double pi__ = 3.1415926535898;
+
+namespace my_utils
+{
+
+    double distance(QPointF a, QPointF b);
+
+}
+
+
+struct Circle
+{
+public:
+    Circle(QPointF cen, double rad, double ar)
+        : center(cen), r(rad), area(ar) {}
+    Circle(QPointF p1, QPointF p2, QPointF p3);
+    Circle(QPointF p1, QPointF p2);
+    QPointF center;
+    double r;
+    double area;
+};
+
 
 class ga18_smallestEnclosingDisk : public AlgorithmBase
 {
@@ -16,8 +42,12 @@ public:
 
 private:
     int n;
-    std::vector<QPoint> points;
-
+    std::vector<QPointF> points;
+    void minDisk( std::vector<QPointF> points );
+    void minDisk( std::vector<QPointF> points, QPointF p1);
+    void minDisk( std::vector<QPointF> points, QPointF p1, QPointF p2);
+//    Circle circleEq( QPointF p1, QPointF p2, QPointF p3);
+//    Circle circleEq( QPointF p1, QPointF p2);
 };
 
 #endif // GA18_SMALLESTENCLOSINGDISK_H
