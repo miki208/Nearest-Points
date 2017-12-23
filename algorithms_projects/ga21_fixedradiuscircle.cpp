@@ -14,42 +14,56 @@ FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius
 
     _globalMaxCount = 0;
     _currentMaxCircle = _points[0];
+    // hidden
     _globalMaxCircle = QPoint(-_radius, -_radius);
 }
 
 void FixedRadiusCircle::runAlgorithm()
 {
-    std::vector<std::pair<double, std::pair<bool,QPoint>>> nearPoints;
     //                    angle             e/l  point
+    std::vector<std::pair<double, std::pair<bool,QPoint>>> nearPoints;
 
+    // Picking point around wich circle rotates
     for (auto current: _points) {
+        // Picking second point on circles ring
         for (auto point: _points) {
             double distance = utils::distance(current,point);
             if (point != current && distance <= 2*_radius) {
                 _currentPoint = current;
 
+                // Calculating angle of current, circles middle and point
+                // (2 of them, for enter and leave event)
                 double B = std::acos(distance/(2*_radius));
                 double A = std::atan2((current.y()-point.y()),(current.x()-point.x())) + M_PI;
                 double alpha = A-B;
                 double beta = A+B;
+
+                // Pushing point twice (when it enters the circle and when it leaves it)
                 nearPoints.push_back(std::make_pair(alpha, std::make_pair(true,point)));
                 nearPoints.push_back(std::make_pair(beta, std::make_pair(false,point)));
             }
         }
 
+        // Sorting points in range by angle
         std::sort(nearPoints.begin(), nearPoints.end(),
                   [](const std::pair<double, std::pair<bool,QPoint>> & a, const std::pair<double, std::pair<bool,QPoint>> & b) -> bool
                   {
                       return a.first < b.first;
                   });
 
+        // Circle will have current inside
         int nearPointsCount = 1;
         _currentMaxCount = 1;
 
+        // p is center point of circle
+        // p has same y coordinate as current
+        // and current laying on circles ring (left)
         QPoint p =  QPoint(current.x() + _radius,current.y());
         QPoint c = current;
         double angle;
 
+        // Points are sorted by angle.
+        // That is why we can increase and decrease number of near points by one
         for (auto nearPoint = nearPoints.cbegin(); nearPoint!=nearPoints.cend(); ++nearPoint) {
             if ((*nearPoint).second.first) {
                 _enterLeave = ENTER;
@@ -61,11 +75,13 @@ void FixedRadiusCircle::runAlgorithm()
                 nearPointsCount--;
             }
 
+            // Calculating event points coordinates for drawing
             _referentPoint = (*nearPoint).second.second;
             _currentCircle = QPoint(std::cos(angle) * (p.x() - c.x()) - std::sin(angle) * (p.y() - c.y()) + c.x(),
                                     std::sin(angle) * (p.x() - c.x()) + std::cos(angle) * (p.y() - c.y()) + c.y());
             _currentCount = nearPointsCount;
 
+            // Updating maximum circle (and count) related to current
             if (nearPointsCount > _currentMaxCount){
                 _currentMaxCircle = _currentCircle;
                 _currentMaxCount = nearPointsCount;
@@ -74,6 +90,7 @@ void FixedRadiusCircle::runAlgorithm()
             AlgorithmBase_updateCanvasAndBlock();
         }
 
+        // Updating global maximum circle (and count)
         if (_currentMaxCount > _globalMaxCount){
             _globalMaxCircle = _currentMaxCircle;
             _globalMaxCount = _currentMaxCount;
@@ -82,6 +99,8 @@ void FixedRadiusCircle::runAlgorithm()
         nearPoints.clear();
     }
 
+    // At the end of animation currentMax and currentCircle are hidden,
+    // same as current and referent point
     _currentCircle.setX(-_radius);
     _currentMaxCircle.setX(-_radius);
     _currentPoint = _currentCircle;
@@ -158,5 +177,49 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
 
 void FixedRadiusCircle::runNaiveAlgorithm()
 {
+    int globalMax = 1;
+    for (auto first: _points) {
+        for (auto second: _points) {
+            if (first == second || utils::distance(first,second) > 2*_radius)
+                continue;
 
+            int x1 = first.x();
+            int y1 = first.y();
+            int x2 = second.x();
+            int y2 = second.y();
+
+            int r = _radius;
+
+            double q = sqrt((x2-x1)^2 + (y2-y1)^2);
+
+            double y3 = (y1+y2)/2;
+            double x3 = (x1+x2)/2;
+
+            double x = x3 + sqrt(std::pow(r^2,2)-std::pow(q/2,2))*(y1-y2)/q;
+            double y = y3 + sqrt(std::pow(r,2)-std::pow(q/2,2))*(x2-x1)/q;
+
+            QPoint circle1 = QPoint(x,y);
+
+            x = x3 - sqrt(std::pow(r,2)-std::pow(q/2,2))*(y1-y2)/q;
+            y = y3 - sqrt(std::pow(r,2)-std::pow(q/2,2))*(x2-x1)/q;
+            QPoint circle2 = QPoint(x,y);
+
+            int localMax1 = 2;
+            int localMax2 = 2;
+
+            for (auto point: _points) {
+                if (point == first || point == second)
+                    continue;
+                if (utils::distance(point,circle1) <= 2*_radius)
+                    localMax1++;
+                if (utils::distance(point,circle2) <= 2*_radius)
+                    localMax2++;
+            }
+
+            if (localMax1 > globalMax)
+                globalMax = localMax1;
+            if (localMax2 > globalMax)
+                globalMax = localMax2;
+        }
+    }
 }
