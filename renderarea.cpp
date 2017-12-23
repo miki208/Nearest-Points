@@ -17,6 +17,10 @@ void RenderArea::paintEvent(QPaintEvent * /*event*/)
     {
         _pAlgorithmBase->drawAlgorithm(painter);
     }
+    else
+    {
+        //painter.fillRect(0,0,width(), height(), Qt::white);
+    }
 }
 
 void RenderArea::setPAlgorithmBase(AlgorithmBase *pAlgorithmBase)

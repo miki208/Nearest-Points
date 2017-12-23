@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QLineEdit>
 #include <iostream>
 #include <fstream>
 
@@ -33,9 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _pAlgorithm{nullptr}, _delayMs{500}     // (default: 500)
 {
     ui->setupUi(this);
-
     setWindowTitle("Geometrijski algoritmi @ MATF");
 
+    /* Algorithm type */
     ui->algorithmType->addItem("SA ČASOVA VEŽBI:", QVariant(EMPTY_PRACTICE));
     ui->algorithmType->addItem("Demonstacija iscrtavanja", QVariant(DRAW_POLYGON));
     ui->algorithmType->addItem("Brišuća prava (mini demo)", QVariant(SWEEP_LINE));
@@ -57,15 +58,13 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
-    ui->importDataFromFile->setEnabled(false);
-    ui->generateRandomData->setEnabled(false);
-
+    /* Render area setup */
     QBoxLayout* renderBoxLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     _renderArea = new RenderArea(this);
     renderBoxLayout->addWidget(_renderArea);
     ui->tab->setLayout(renderBoxLayout);
 
-    /* Add chart */
+    /* Chart */
     _optimalSeries = new QLineSeries();
     _naiveSeries = new QLineSeries();
 
@@ -102,28 +101,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tab_3->setLayout(chartBoxLayout);
 
-    animationButtonsSetEnabled(false);
+    /* Initial animation speed */
+    _delayMs = (12-ui->animationSpeed->value())*100;
+
+    /* Left side options */
+    ui->importDataFromFile->setVisible(false);
+    ui->generateRandomData->setVisible(false);
+    ui->gb2_animation->setVisible(false);
+    ui->gb3_params->setVisible(false);
+    ui->startMeasurement->setVisible(false);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::animationButtonsSetEnabled(bool value)
-{
-    ui->start->setEnabled(value);
-    ui->pause->setEnabled(value);
-    ui->next->setEnabled(value);
-    ui->restart->setEnabled(value);
-}
-
-void MainWindow::algorithmOptionsSetEnabled(bool value)
-{
-    ui->algorithmType->setEnabled(value);
-    ui->importDataFromFile->setEnabled(value);
-    ui->generateRandomData->setEnabled(value);
-    ui->clean->setEnabled(value);
 }
 
 void MainWindow::makeNewAlgotirhm(std::string filename)
@@ -133,8 +124,11 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
 
     int currentIndex = ui->algorithmType->currentIndex();
     int currentAlgorithm = ui->algorithmType->itemData(currentIndex).toInt();
+    int inputDim;
+    bool checker;
 
     _filename = filename;
+    _delayMs = (12-ui->animationSpeed->value())*100;
     switch (currentAlgorithm)
     {
         case EMPTY_PRACTICE:
@@ -150,7 +144,11 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             _pAlgorithm = new GrahamScan(_renderArea, _delayMs, _filename);
             break;
         case LINE_SEGMENT_INTERSECTION:
-            _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
+            inputDim = ui->gb3_params->findChild<QLineEdit*>("gui_inputDim")->text().toInt(&checker);
+            if(checker)
+                _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs, _filename, inputDim);
+            else
+                _pAlgorithm = new LineSegmentIntersection(_renderArea, _delayMs);
             break;
         case DCEL_DEMO:
             _pAlgorithm = new DCELDemo(_renderArea, _delayMs, filename);
@@ -191,15 +189,33 @@ void MainWindow::on_algorithmType_currentIndexChanged(int index)
 
     if(currentAlgorithm != EMPTY_PRACTICE && currentAlgorithm != EMPTY_PROJECTS)
     {
-        ui->importDataFromFile->setEnabled(true);
-        ui->generateRandomData->setEnabled(true);
+        ui->importDataFromFile->setVisible(true);
+        ui->generateRandomData->setVisible(true);
+        ui->gb3_params->setVisible(true);
+        addAditionalParams(currentAlgorithm);
     }
     else
     {
-        ui->importDataFromFile->setEnabled(false);
-        ui->generateRandomData->setEnabled(false);
+        ui->importDataFromFile->setVisible(false);
+        ui->generateRandomData->setVisible(false);
+        ui->gb3_params->setVisible(false);
     }
-    animationButtonsSetEnabled(false);
+    ui->gb2_animation->setVisible(false);
+}
+
+void MainWindow::addAditionalParams(int algorithmType)
+{
+
+    QGridLayout* additionalOptionsLayout = new QGridLayout();
+    if(algorithmType == LINE_SEGMENT_INTERSECTION)
+    {
+            QLabel* lsi_label = new QLabel("Dimenzija ulaza: ");
+            QLineEdit* lsi_text = new QLineEdit("20");
+            lsi_text->setObjectName("gui_inputDim");
+            additionalOptionsLayout->addWidget(lsi_label, 0, 0, 1, 1);
+            additionalOptionsLayout->addWidget(lsi_text, 0, 1, 1, 1);
+            ui->gb3_params->setLayout(additionalOptionsLayout);
+    }
 }
 
 void MainWindow::on_importDataFromFile_clicked()
@@ -210,26 +226,35 @@ void MainWindow::on_importDataFromFile_clicked()
         return;
 
     makeNewAlgotirhm(fileName.toStdString());
-    animationButtonsSetEnabled(true);
+    ui->gb2_animation->setVisible(true);
 }
 
 void MainWindow::on_generateRandomData_clicked()
 {
     makeNewAlgotirhm("");
-    animationButtonsSetEnabled(true);
+    ui->gb2_animation->setVisible(true);
 }
 
 void MainWindow::on_clean_clicked()
 {
     ui->algorithmType->setCurrentIndex(0);
-    animationButtonsSetEnabled(false);
-    _renderArea->update();
+    ui->gb2_animation->setVisible(false);
+    ui->start->setVisible(true);
+    ui->gb3_params->setVisible(false);
+    ui->gb1_algorithm->setVisible(true);
+    if(_pAlgorithm)
+    {
+        _pAlgorithm->resetAnimation();
+        _pAlgorithm = nullptr;
+        _renderArea->setPAlgorithmBase(nullptr);
+        _renderArea->update();
+    }
 }
 
 void MainWindow::on_start_clicked()
 {
-    ui->start->setEnabled(false);
-    algorithmOptionsSetEnabled(false);
+    ui->start->setVisible(false);
+    ui->gb1_algorithm->setVisible(false);
 
     if(_pAlgorithm)
         _pAlgorithm->startAnimation();
@@ -248,9 +273,9 @@ void MainWindow::on_next_clicked()
 
 void MainWindow::on_restart_clicked()
 {
-    ui->start->setEnabled(false);
-    ui->pause->setEnabled(true);
-    ui->next->setEnabled(true);
+    ui->start->setVisible(false);
+    ui->pause->setVisible(true);
+    ui->next->setVisible(true);
 
     if (_pAlgorithm)
     {
@@ -262,15 +287,14 @@ void MainWindow::on_restart_clicked()
 
 void MainWindow::on_animationFinished()
 {
-    ui->algorithmType->setEnabled(true);
-    ui->clean->setEnabled(true);
-    animationButtonsSetEnabled(false);
-    ui->restart->setEnabled(true);
+    ui->gb1_algorithm->setVisible(true);
+    ui->gb2_animation->setVisible(false);
+    ui->start->setVisible(true);
+
 }
 
 void MainWindow::on_lineSeriesChange(double dim, double optimal, double naive)
 {
-
     _optimalSeries->append(dim, optimal);
     _naiveSeries->append(dim, naive);
 }
@@ -283,4 +307,23 @@ void MainWindow::on_startMeasurement_clicked()
     _mThread = new TimeMeasurementThread(currentAlgorithm, MIN_DIM, STEP, MAX_DIM);
     connect(_mThread, &TimeMeasurementThread::updateChart, this, &MainWindow::on_lineSeriesChange);
     _mThread->start();
+}
+
+void MainWindow::on_animationSpeed_valueChanged(int value)
+{
+    if(_pAlgorithm)
+    {
+        _pAlgorithm->changeDelay((12-value)*100);
+    }
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if(index == 0)
+    {
+        ui->startMeasurement->setVisible(false);
+    }
+    else{
+        ui->startMeasurement->setVisible(true);
+    }
 }

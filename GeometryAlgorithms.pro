@@ -75,4 +75,10 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
+RESOURCES +=    img/play.png \
+                img/pause.png \
+                img/next.png \
+                img/reset.png \
+                img/stop.png
+
 QMAKE_CXXFLAGS += -Wno-sign-compare

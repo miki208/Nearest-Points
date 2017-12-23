@@ -48,9 +48,8 @@ public:
         MAX_PROJECTS = 199
     };
 private:
-    void animationButtonsSetEnabled(bool value);
-    void algorithmOptionsSetEnabled(bool value);
     void makeNewAlgotirhm(std::string filename = "");
+    void addAditionalParams(int algorithmType);
 
 private slots:
     void on_algorithmType_currentIndexChanged(int index);
@@ -64,6 +63,10 @@ private slots:
 
     void on_startMeasurement_clicked();
     void on_lineSeriesChange(double dim, double optimal, double naive);
+
+    void on_animationSpeed_valueChanged(int value);
+
+    void on_tabWidget_currentChanged(int index);
 
 public slots:
     void on_animationFinished();
