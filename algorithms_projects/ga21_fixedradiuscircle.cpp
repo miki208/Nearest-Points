@@ -1,7 +1,7 @@
 #include "ga21_fixedradiuscircle.h"
 #include <QDebug>
 
-FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, std::string filename)
+FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius, std::string filename)
 :AlgorithmBase{pRenderer, delayMs}
 {
     if(filename == "") {
@@ -10,14 +10,15 @@ FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, std::strin
         _points = readPointsFromFile(filename);
     }
 
-    _radius = 70;
+    _radius = radius;
+
+    _globalMaxCount = 0;
+    _currentMaxCircle = _points[0];
+    _globalMaxCircle = QPoint(-_radius, -_radius);
 }
 
 void FixedRadiusCircle::runAlgorithm()
 {
-    _globalMaxCount = 0;
-    _currentMaxCircle = _points[0];
-
     std::vector<std::pair<double, std::pair<bool,QPoint>>> nearPoints;
     //                    angle             e/l  point
 
@@ -73,7 +74,7 @@ void FixedRadiusCircle::runAlgorithm()
             AlgorithmBase_updateCanvasAndBlock();
         }
 
-        if(_currentMaxCount > _globalMaxCount){
+        if (_currentMaxCount > _globalMaxCount){
             _globalMaxCircle = _currentMaxCircle;
             _globalMaxCount = _currentMaxCount;
         }
@@ -109,7 +110,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
     painter.setPen(p);
     painter.setBrush(inactivePointColor);
 
-    for(auto point : _points){
+    for (auto point : _points) {
         painter.drawEllipse(point,2,2);
     }
 
@@ -118,7 +119,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
     painter.setBrush(currentColor);
     painter.drawEllipse(_currentPoint, 3,3);
 
-    if(_enterLeave == ENTER){
+    if (_enterLeave == ENTER) {
         painter.setPen(enterColor);
         painter.setBrush(enterColor);
     } else {

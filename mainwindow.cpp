@@ -177,7 +177,10 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             _pAlgorithm = new ga18_smallestEnclosingDisk(_renderArea, _delayMs, _filename);
             break;
         case FIXEDRADIUSCIRCLE:
-            _pAlgorithm = new FixedRadiusCircle(_renderArea, _delayMs, _filename);
+            int radius = ui->gb3_params->findChild<QLineEdit*>("gui_radius")->text().toInt(&checker);
+            if(!checker)
+                radius = 70;
+            _pAlgorithm = new FixedRadiusCircle(_renderArea, _delayMs, radius, _filename);
             break;
     }
 
@@ -220,6 +223,15 @@ void MainWindow::addAditionalParams(int algorithmType)
             additionalOptionsLayout->addWidget(lsi_label, 0, 0, 1, 1);
             additionalOptionsLayout->addWidget(lsi_text, 0, 1, 1, 1);
             ui->gb3_params->setLayout(additionalOptionsLayout);
+    }
+    else if (algorithmType == FIXEDRADIUSCIRCLE)
+    {
+        QLabel* frc_label = new QLabel("Precnik kruga: ");
+        QLineEdit* frc_text = new QLineEdit("70");
+        frc_text->setObjectName("gui_radius");
+        additionalOptionsLayout->addWidget(frc_label, 0, 0, 1, 1);
+        additionalOptionsLayout->addWidget(frc_text, 0, 1, 1, 1);
+        ui->gb3_params->setLayout(additionalOptionsLayout);
     }
 }
 
