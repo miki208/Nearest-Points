@@ -25,6 +25,7 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithms_projects/ga05_quickhull.h"
 #include "algorithms_projects/ga15_pointrobotshortestpath.h"
 #include "algorithms_projects/ga16_quadtree.h"
+#include "algorithms_projects/ga18_smallestenclosingdisk.h"
 #include "algorithms_projects/ga21_fixedradiuscircle.h"
 #include "config.h"
 
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Konveksni omotač (QuickHull) - under construction", QVariant(QUICK_HULL));
     //ui->algorithmType->addItem("Odredjivanje najkraceg puta sa obilazenjem prepreka za tackastog robota", QVariant(POINT_ROBOT_SHORTEST_PATH));
     ui->algorithmType->addItem("Quadtree provera kolizije", QVariant(QUADTREE));
+    ui->algorithmType->addItem("Odredjivanje diska najmanjeg poluprecnika koji pokriva sve tacke u ravni", QVariant(SMALLEST_ENCLOSING_CIRCLE));
     ui->algorithmType->addItem("Pozicioniranje kruga fiksnog precnika u ravni - maksimizovanje tacaka u njegovoj unutrasnjosti", QVariant(FIXEDRADIUSCIRCLE));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
@@ -171,9 +173,12 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
         case QUADTREE:
             _pAlgorithm = new Quadtree(_renderArea, _delayMs, _filename);
             break;
+        case SMALLEST_ENCLOSING_CIRCLE:
+            _pAlgorithm = new ga18_smallestEnclosingDisk(_renderArea, _delayMs, _filename);
+            break;
         case FIXEDRADIUSCIRCLE:
             _pAlgorithm = new FixedRadiusCircle(_renderArea, _delayMs, _filename);
-        break;
+            break;
     }
 
     if(_pAlgorithm)
