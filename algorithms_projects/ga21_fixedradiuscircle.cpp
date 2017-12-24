@@ -1,5 +1,4 @@
 #include "ga21_fixedradiuscircle.h"
-#include <QDebug>
 
 FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius, std::string filename, int inputSize)
 :AlgorithmBase{pRenderer, delayMs}
@@ -178,6 +177,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
 void FixedRadiusCircle::runNaiveAlgorithm()
 {
     int globalMax = 1;
+    // Picking 2 points, wich with radius can construct maximum 2 circles
     for (auto first: _points) {
         for (auto second: _points) {
             if (first == second || utils::distance(first,second) > 2*_radius)
@@ -190,12 +190,12 @@ void FixedRadiusCircle::runNaiveAlgorithm()
 
             int r = _radius;
 
-            double q = sqrt((x2-x1)^2 + (y2-y1)^2);
+            double q = sqrt(pow(x2-x1,2) + pow(y2-y1,2));
 
             double y3 = (y1+y2)/2;
             double x3 = (x1+x2)/2;
 
-            double x = x3 + sqrt(std::pow(r^2,2)-std::pow(q/2,2))*(y1-y2)/q;
+            double x = x3 + sqrt(std::pow(r,2)-std::pow(q/2,2))*(y1-y2)/q;
             double y = y3 + sqrt(std::pow(r,2)-std::pow(q/2,2))*(x2-x1)/q;
 
             QPoint circle1 = QPoint(x,y);
@@ -207,6 +207,7 @@ void FixedRadiusCircle::runNaiveAlgorithm()
             int localMax1 = 2;
             int localMax2 = 2;
 
+            // For any other point check if it is inside one of 2 circles
             for (auto point: _points) {
                 if (point == first || point == second)
                     continue;
