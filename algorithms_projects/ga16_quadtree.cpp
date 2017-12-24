@@ -2,7 +2,7 @@
 Quadtree *Node::parent;
 
 Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase(pRenderer, delayMs)
+    : AlgorithmBase(pRenderer, delayMs), collider(nullptr)
 {
     // tune delay and input size for demo
     if (delayMs != 0){
@@ -63,7 +63,8 @@ void Quadtree::runAlgorithm()
 void Quadtree::drawAlgorithm(QPainter &painter) const
 {
     root->drawSelf(painter);
-
+    if (!collider)
+        return;
     std::vector<Item*> collisionCandidates = root->retrieve(collider);
     // draw an item for which we are checking collision
     QPen p;
