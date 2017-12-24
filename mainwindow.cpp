@@ -219,8 +219,23 @@ void MainWindow::on_algorithmType_currentIndexChanged(int index)
     ui->gb2_animation->setVisible(false);
 }
 
+void MainWindow::removeAdditionalParams()
+{
+        auto tmp = ui->gb3_params->layout();
+        QLayoutItem *item;
+        while ( ( item = tmp->takeAt(0) ) ){
+            delete item->widget();
+            delete item;
+        }
+        delete tmp->layout();
+}
+
 void MainWindow::addAditionalParams(int algorithmType)
 {
+    if ( ui->gb3_params->layout() ){
+        removeAdditionalParams();
+    }
+
     QGridLayout* additionalOptionsLayout = new QGridLayout();
     if(algorithmType == LINE_SEGMENT_INTERSECTION)
     {

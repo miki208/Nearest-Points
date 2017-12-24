@@ -51,6 +51,7 @@ public:
 private:
     void makeNewAlgotirhm(std::string filename = "");
     void addAditionalParams(int algorithmType);
+    void removeAdditionalParams();
 
 private slots:
     void on_algorithmType_currentIndexChanged(int index);
