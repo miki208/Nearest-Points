@@ -11,23 +11,43 @@ FixedRadiusCircle::FixedRadiusCircle(QWidget *pRenderer, int delayMs, int radius
 
     _radius = radius;
 
-    _globalMaxCount = 0;
-    _currentMaxCircle = _points[0];
+    if (!_points.empty()) {
+        _currentMaxCircle = _points[0];
+    } else {
+        _currentCircle.setX(-_radius);
+        _currentMaxCircle.setX(-_radius);
+        _currentPoint = _currentCircle;
+        _referentPoint = _currentCircle;
+        _currentMaxCircle = QPoint(-_radius, -_radius); // hidden
+    }
+
     // hidden
     _globalMaxCircle = QPoint(-_radius, -_radius);
+    _globalMaxCount = 0;
+
 }
 
 void FixedRadiusCircle::runAlgorithm()
 {
+    if(_points.empty()){
+        _globalMaxCount = 0;
+        emit animationFinished();
+        return;
+    }
+
     //                    angle             e/l  point
     std::vector<std::pair<double, std::pair<bool,QPoint>>> nearPoints;
+    QPoint current;
+    QPoint point;
 
     // Picking point around wich circle rotates
-    for (auto current: _points) {
+    for(unsigned i = 0; i!=_points.size(); ++i){
+        current = _points[i];
         // Picking second point on circles ring
-        for (auto point: _points) {
+        for(unsigned j = 0; j!=_points.size(); ++j){
+            point = _points[j];
             double distance = utils::distance(current,point);
-            if (point != current && distance <= 2*_radius) {
+            if (i != j && distance <= 2*_radius) {
                 _currentPoint = current;
 
                 // Calculating angle of current, circles middle and point
@@ -47,7 +67,11 @@ void FixedRadiusCircle::runAlgorithm()
         std::sort(nearPoints.begin(), nearPoints.end(),
                   [](const std::pair<double, std::pair<bool,QPoint>> & a, const std::pair<double, std::pair<bool,QPoint>> & b) -> bool
                   {
-                      return a.first < b.first;
+                      if(a.first != b.first)
+                          return a.first < b.first;
+                      if(a.second.first == ENTER)
+                          return false;
+                      return true;
                   });
 
         // Circle will have current inside
@@ -119,7 +143,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
     QColor maxCircleFillColor = QColor(125,125,195,100);
     QColor enterColor = QColor(0,200,50,255);
     QColor leaveColor = QColor(200,0,50,255);
-    QColor currentColor = QColor(200,200,50,255);
+    QColor currentColor = QColor(200,50,200,255);
 
     QPen p = painter.pen();
 
@@ -135,7 +159,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
     p.setColor(currentColor);
     painter.setPen(p);
     painter.setBrush(currentColor);
-    painter.drawEllipse(_currentPoint, 3,3);
+    painter.drawEllipse(_currentPoint, 5,5);
 
     if (_enterLeave == ENTER) {
         painter.setPen(enterColor);
@@ -144,7 +168,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
         painter.setPen(leaveColor);
         painter.setBrush(leaveColor);
     }
-    painter.drawEllipse(_referentPoint,3,3);
+    painter.drawEllipse(_referentPoint,4,4);
 
 
     p.setColor(circleColor);
@@ -176,11 +200,19 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
 
 void FixedRadiusCircle::runNaiveAlgorithm()
 {
+    if(_points.empty()){
+        _globalMaxCount = 0;
+        emit animationFinished();
+        return;
+    }
+
     int globalMax = 1;
     // Picking 2 points, wich with radius can construct maximum 2 circles
-    for (auto first: _points) {
-        for (auto second: _points) {
-            if (first == second || utils::distance(first,second) > 2*_radius)
+    for (unsigned i=0; i<_points.size(); ++i) {
+        QPoint first = _points[i];
+        for (unsigned j=0; j<_points.size(); ++j) {
+            QPoint second = _points[j];
+            if (i == j || utils::distance(first,second) > 2*_radius)
                 continue;
 
             int x1 = first.x();
@@ -208,8 +240,9 @@ void FixedRadiusCircle::runNaiveAlgorithm()
             int localMax2 = 2;
 
             // For any other point check if it is inside one of 2 circles
-            for (auto point: _points) {
-                if (point == first || point == second)
+            for (unsigned k=0; k<_points.size(); ++k) {
+                QPoint point = _points[k];
+                if (k == i || k == j)
                     continue;
                 if (utils::distance(point,circle1) <= _radius)
                     localMax1++;
@@ -223,4 +256,15 @@ void FixedRadiusCircle::runNaiveAlgorithm()
                 globalMax = localMax2;
         }
     }
+    _globalMaxCount = globalMax;
+}
+
+void FixedRadiusCircle::setPoints(const std::vector<QPoint> &points)
+{
+    _points = points;
+}
+
+int FixedRadiusCircle::result() const
+{
+    return _globalMaxCount;
 }

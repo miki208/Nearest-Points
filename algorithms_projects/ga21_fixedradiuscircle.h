@@ -21,6 +21,9 @@ public:
     void drawAlgorithm(QPainter &painter) const;
     void runNaiveAlgorithm();
 
+    void setPoints(const std::vector<QPoint> &points);
+    int result() const;
+
 private:
     int _radius;
     std::vector<QPoint> _points;
