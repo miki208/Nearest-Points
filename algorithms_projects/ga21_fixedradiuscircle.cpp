@@ -211,9 +211,9 @@ void FixedRadiusCircle::runNaiveAlgorithm()
             for (auto point: _points) {
                 if (point == first || point == second)
                     continue;
-                if (utils::distance(point,circle1) <= 2*_radius)
+                if (utils::distance(point,circle1) <= _radius)
                     localMax1++;
-                if (utils::distance(point,circle2) <= 2*_radius)
+                if (utils::distance(point,circle2) <= _radius)
                     localMax2++;
             }
 
