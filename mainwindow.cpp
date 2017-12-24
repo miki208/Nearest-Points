@@ -171,7 +171,15 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             _pAlgorithm = new PointRobotShortestPath(_renderArea, _delayMs, _filename);
             break;
         case QUADTREE:
-            _pAlgorithm = new Quadtree(_renderArea, _delayMs, _filename);
+        {
+            int size = ui->gb3_params->findChild<QLineEdit*>("gui_quadtree")->text().toInt(&checker);
+            if(!checker)
+                size = 10;
+            Quadtree *q = new Quadtree(_renderArea, _delayMs, _filename);
+            q->setSquareSize(size);
+
+            _pAlgorithm = q;
+        }
             break;
         case SMALLEST_ENCLOSING_CIRCLE:
             _pAlgorithm = new ga18_smallestEnclosingDisk(_renderArea, _delayMs, _filename);
@@ -213,7 +221,6 @@ void MainWindow::on_algorithmType_currentIndexChanged(int index)
 
 void MainWindow::addAditionalParams(int algorithmType)
 {
-
     QGridLayout* additionalOptionsLayout = new QGridLayout();
     if(algorithmType == LINE_SEGMENT_INTERSECTION)
     {
@@ -231,6 +238,16 @@ void MainWindow::addAditionalParams(int algorithmType)
         frc_text->setObjectName("gui_radius");
         additionalOptionsLayout->addWidget(frc_label, 0, 0, 1, 1);
         additionalOptionsLayout->addWidget(frc_text, 0, 1, 1, 1);
+        ui->gb3_params->setLayout(additionalOptionsLayout);
+    } else if (algorithmType == QUADTREE)
+    {
+        QLabel* label = new QLabel("Stranica kvadrata: ");
+        int def = _renderArea->height() / 30;
+        def = def ? def : 30;
+        QLineEdit* text = new QLineEdit(QString::number(def));
+        text->setObjectName("gui_quadtree");
+        additionalOptionsLayout->addWidget(label, 0, 0, 1, 1);
+        additionalOptionsLayout->addWidget(text, 0, 1, 1, 1);
         ui->gb3_params->setLayout(additionalOptionsLayout);
     }
 }

@@ -2,7 +2,7 @@
 Quadtree *Node::parent;
 
 Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase(pRenderer, delayMs != 0 ? 10 : 0), insertingFinished(false)
+    : AlgorithmBase(pRenderer, delayMs)
 {
     // tune delay and input size for demo
     if (delayMs != 0){
@@ -47,31 +47,24 @@ void Quadtree::runAlgorithm()
     // building a quadtree
     for (Item * item : allItems) {
         root->insert(item, true);
+        collider = item;
         AlgorithmBase_updateCanvasAndBlock();
     }
 
     // display checking collision of an element
-    insertingFinished = true;
-    if(_pRenderer){
-        collider = allItems[0];
-        collisionCandidates = root->retrieve(collider);
-    }
+//    insertingFinished = true;
+//    if(_pRenderer){
+//        collisionCandidates = root->retrieve(collider);
+//    }
 
-    AlgorithmBase_updateCanvasAndBlock();
-    AlgorithmBase_updateCanvasAndBlock();
     emit animationFinished();
-    // qDebug() << result();
 }
 
 void Quadtree::drawAlgorithm(QPainter &painter) const
 {
     root->drawSelf(painter);
 
-    // Display collision candidates of one item
-    if (!insertingFinished){
-        return;
-    }
-
+    std::vector<Item*> collisionCandidates = root->retrieve(collider);
     // draw an item for which we are checking collision
     QPen p;
     p.setWidth(20);
@@ -91,13 +84,15 @@ void Quadtree::drawAlgorithm(QPainter &painter) const
             painter.fillRect(c->x, c->y, c->h, c->w, Qt::GlobalColor::red);
         else
             painter.fillRect(c->x, c->y, c->h, c->w, Qt::GlobalColor::yellow);
-        // p.setWidth(3);
-        // painter.setPen(p);
-        // painter.drawLine(collider->x, collider->y, c->x, c->y);
-        // p.setWidth(10);
-        // painter.setPen(p);
-        // painter.drawPoint(c->x, c->y);
     }
+
+    // draw number of colliding items
+    p.setColor(Qt::GlobalColor::black);
+    p.setWidth(10);
+    painter.setPen(p);
+//    painter.drawRoundRect(0, 0, 205, 60);
+    painter.fillRect(0, 0, 200, 35, Qt::GlobalColor::gray);
+    painter.drawText(10, 25, "Kvadrata u koliziji: " + QString::number( result() ));
 }
 
 void Quadtree::getDepthColor(int depth, int &red, int &green, int &blue)
@@ -187,14 +182,14 @@ Node::Node(int x, int y, int width, int height, int depth) : bounds(x, y, width,
     depth(depth), isLeafNode(true)
 {}
 
-std::vector<Item*> Node::retrieve(Item *item)
+std::vector<Item*> Node::retrieve(Item *item) const
 {
     std::vector<Item*> result;
     retrieve(item, result);
     return result;
 }
 
-void Node::retrieve(Item *item, std::vector<Item*> &result)
+void Node::retrieve(Item *item, std::vector<Item*> &result) const
 {
     if(isLeafNode){
         result.insert(result.end(), children.begin(), children.end());
@@ -251,7 +246,7 @@ void Node::split()
     nodes[DownLeft] = new Node(bounds.x, yMid, width, height, depth + 1);
 }
 
-std::vector<Node::Quadrant> Node::findQuadrants(Item *item)
+std::vector<Node::Quadrant> Node::findQuadrants(Item *item) const
 {
     int midX = bounds.x + bounds.w / 2;
     int midY = bounds.y + bounds.h / 2;
@@ -293,6 +288,7 @@ void Quadtree::addCollision(Item *a, Item *b)
 void Quadtree::setSquareSize(int size)
 {
     squareSize = size;
+    setPoints(points);
 }
 
 void Quadtree::clearResult()
@@ -301,7 +297,7 @@ void Quadtree::clearResult()
 }
 
 // returns the number of items that are colliding
-int Quadtree::result()
+int Quadtree::result() const
 {
     return std::count(hadCollision.begin(), hadCollision.end(), true);
 }

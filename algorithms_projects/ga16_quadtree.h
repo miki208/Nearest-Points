@@ -35,9 +35,9 @@ public:
     Node(int x, int y, int width, int height, int depth);
     Node(Bounds &bounds, int depth);
     Bounds bounds;
-    std::vector<Item*> retrieve(Item *item);
-    std::vector<Node::Quadrant> findQuadrants(Item *item);
-    void retrieve(Item *item, std::vector<Item*> &result);
+    std::vector<Item*> retrieve(Item *item) const;
+    std::vector<Node::Quadrant> findQuadrants(Item *item) const;
+    void retrieve(Item *item, std::vector<Item*> &result) const;
     void insert(Item *item, bool count);
     void drawSelf(QPainter &painter) const;
     int depth;
@@ -65,17 +65,15 @@ public:
     void setPoints(const std::vector<QPoint> &points);
     void setSquareSize(int size);
     void addCollision(Item *a, Item *b);
-    int result();
+    int result() const;
 private:
     void clearResult();
     std::vector<bool> hadCollision; // if i-th element is colliding
     std::vector<QPoint> points; // algorithm input
     std::vector<Item*> allItems; // items made from points
     // std::set<std::pair<Item*, Item*>> collisions;
-    std::vector<Item*> collisionCandidates; // show candidates on last draw
     Item *collider; // focused item on last draw
     Node *root; // Root node of a quadtree
-    bool insertingFinished; // drawing flag
     int squareSize = 30;
 
 };
