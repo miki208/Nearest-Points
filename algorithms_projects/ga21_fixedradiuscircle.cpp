@@ -67,8 +67,13 @@ void FixedRadiusCircle::runAlgorithm()
         std::sort(nearPoints.begin(), nearPoints.end(),
                   [](const std::pair<double, std::pair<bool,QPoint>> & a, const std::pair<double, std::pair<bool,QPoint>> & b) -> bool
                   {
-//                      return a.first < b.first;
-                      return a.first != b.first ? a.first < b.first : a.second.first == ENTER;
+                        if (a.first != b.first) {
+                            return a.first < b.first;
+                        } else if (a.second.second == b.second.second) {
+                            return false;
+                        } else {
+                            return a.second.first == ENTER;
+                        }
                   });
 
         // Circle will have current inside

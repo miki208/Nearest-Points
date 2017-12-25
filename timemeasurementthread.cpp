@@ -1,5 +1,4 @@
 #include "timemeasurementthread.h"
-#include <QDebug>
 
 #include "config.h"
 #include "mainwindow.h"
@@ -65,7 +64,6 @@ void TimeMeasurementThread::run()
 
         if(pAlgorithm)
         {
-            qDebug() << i;
 #ifndef SKIP_OPTIMAL
             begin = clock();
             pAlgorithm->runAlgorithm();
