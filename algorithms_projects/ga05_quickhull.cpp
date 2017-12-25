@@ -35,7 +35,7 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
             maxPointIndex = i;
         }
 
-        updateCanvasAndBlock();
+        AlgorithmBase_updateCanvasAndBlock();
     }
     _findingMaxPointIndicator = false;
 
@@ -46,10 +46,10 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
 
     _pointDrawVector.push_back(p1);
     _pointDrawVector.push_back(*points[maxPointIndex]);
-    updateCanvasAndBlock();
+    AlgorithmBase_updateCanvasAndBlock();
     _pointDrawVector.push_back(*points[maxPointIndex]);
     _pointDrawVector.push_back(p2);
-    updateCanvasAndBlock();
+    AlgorithmBase_updateCanvasAndBlock();
 
     std::vector<const QPoint*> topSidePoints;
     std::vector<const QPoint*> bottomSidePoints;
