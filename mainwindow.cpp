@@ -170,16 +170,17 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
         case POINT_ROBOT_SHORTEST_PATH:
             _pAlgorithm = new PointRobotShortestPath(_renderArea, _delayMs, _filename);
             break;
-        case QUADTREE:
-        {
-            int size = ui->gb3_params->findChild<QLineEdit*>("gui_quadtree")->text().toInt(&checker);
-            if(!checker)
-                size = 10;
-            Quadtree *q = new Quadtree(_renderArea, _delayMs, _filename);
-            q->setSquareSize(size);
-
+        case QUADTREE:{
+            int inputSize = 300;
+            int squareSize = 30;
+            //if(checker){
+                squareSize = ui->gb3_params->findChild<QLineEdit*>("gui_quadtree_square_size")->text().toInt(&checker);
+                inputSize = ui->gb3_params->findChild<QLineEdit*>("gui_quadtree_input_size")->text().toInt(&checker);
+            //}
+            Quadtree *q = new Quadtree(_renderArea, _delayMs, _filename, inputSize);
+            q->setSquareSize(squareSize);
             _pAlgorithm = q;
-        }
+            }
             break;
         case SMALLEST_ENCLOSING_CIRCLE:
             _pAlgorithm = new ga18_smallestEnclosingDisk(_renderArea, _delayMs, _filename);
@@ -260,9 +261,15 @@ void MainWindow::addAditionalParams(int algorithmType)
         int def = _renderArea->height() / 30;
         def = def ? def : 30;
         QLineEdit* text = new QLineEdit(QString::number(def));
-        text->setObjectName("gui_quadtree");
+        text->setObjectName("gui_quadtree_square_size");
         additionalOptionsLayout->addWidget(label, 0, 0, 1, 1);
         additionalOptionsLayout->addWidget(text, 0, 1, 1, 1);
+
+        label = new QLabel("Broj kvadrata: ");
+        text = new QLineEdit("300");
+        text->setObjectName("gui_quadtree_input_size");
+        additionalOptionsLayout->addWidget(label, 1, 0, 1, 1);
+        additionalOptionsLayout->addWidget(text, 1, 1, 1, 1);
         ui->gb3_params->setLayout(additionalOptionsLayout);
     }
 }

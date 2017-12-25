@@ -4,10 +4,6 @@ Quadtree *Node::parent;
 Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
     : AlgorithmBase(pRenderer, delayMs), collider(nullptr)
 {
-    // tune delay and input size for demo
-    if (delayMs != 0){
-        inputSize = 333;
-    }
     std::vector<QPoint> points_;
     if(filename == "")
         points_ = generateRandomPoints(inputSize);
@@ -23,7 +19,6 @@ Quadtree::Quadtree(QWidget *pRenderer, int delayMs, std::string filename, int in
         root = new Node(b, 1);
     }
 
-
     Node::parent = this;
     setPoints(points_);
 }
@@ -35,6 +30,7 @@ void Quadtree::setPoints(const std::vector<QPoint> &points_)
     allItems.reserve(points.size());
     hadCollision.resize(points.size());
     clearResult();
+
     int i = 0;
     for (QPoint &p : points){
         allItems.push_back(new Item(p.x(), p.y(), squareSize, squareSize, i++));
@@ -45,17 +41,12 @@ void Quadtree::runAlgorithm()
 {
     clearResult();
     // building a quadtree
-    for (Item * item : allItems) {
+    for (Item * item : allItems) { 
         root->insert(item, true);
+
         collider = item;
         AlgorithmBase_updateCanvasAndBlock();
     }
-
-    // display checking collision of an element
-//    insertingFinished = true;
-//    if(_pRenderer){
-//        collisionCandidates = root->retrieve(collider);
-//    }
 
     emit animationFinished();
 }
@@ -74,7 +65,6 @@ void Quadtree::drawAlgorithm(QPainter &painter) const
 
     painter.fillRect(collider->x, collider->y, collider->h, collider->w,
                      Qt::GlobalColor::green);
-    // painter.drawPoint(collider->x, collider->y);
 
     // draw all items that may be colliding with collider
     painter.setPen(p);
@@ -91,7 +81,7 @@ void Quadtree::drawAlgorithm(QPainter &painter) const
     p.setColor(Qt::GlobalColor::black);
     p.setWidth(10);
     painter.setPen(p);
-//    painter.drawRoundRect(0, 0, 205, 60);
+
     painter.fillRect(0, 0, 200, 35, Qt::GlobalColor::gray);
     painter.drawText(10, 25, "Kvadrata u koliziji: " + QString::number( result() ));
 }
@@ -154,6 +144,7 @@ void Node::drawSelf(QPainter &painter) const
         parent->getDepthColor(depth, r, g, b);
         p.setColor(QColor::fromRgb(r, g, b));
         painter.setPen(p);
+
         painter.drawLine(bounds.x, bounds.y + bounds.h / 2,
                          bounds.x + bounds.w,  bounds.y + bounds.h / 2);
         painter.drawLine(bounds.x + bounds.w / 2, bounds.y,
@@ -168,6 +159,7 @@ void Quadtree::runNaiveAlgorithm()
         for (unsigned j = i + 1; j < allItems.size(); j++){
             Item *a = allItems[i];
             Item *b = allItems[j];
+
             if (a->hasCollision(b)){
                 addCollision(a, b);
             }
