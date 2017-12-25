@@ -39,6 +39,8 @@ private:
     int _currentCount;
     int _currentMaxCount;
 
+    double _currentAngle;
+
     bool _enterLeave;
 };
 

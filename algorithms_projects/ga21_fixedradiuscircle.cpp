@@ -105,6 +105,7 @@ void FixedRadiusCircle::runAlgorithm()
             _currentCircle = QPoint(std::cos(angle) * (p.x() - c.x()) - std::sin(angle) * (p.y() - c.y()) + c.x(),
                                     std::sin(angle) * (p.x() - c.x()) + std::cos(angle) * (p.y() - c.y()) + c.y());
             _currentCount = nearPointsCount;
+            _currentAngle = angle;
 
             // Updating maximum circle (and count) related to current
             if (nearPointsCount > _currentMaxCount){
@@ -126,7 +127,7 @@ void FixedRadiusCircle::runAlgorithm()
 
     // At the end of animation currentMax and currentCircle are hidden,
     // same as current and referent point
-    _currentCircle.setX(-_radius);
+    _currentCircle.setY(-_radius*2);
     _currentMaxCircle.setX(-_radius);
     _currentPoint = _currentCircle;
     _referentPoint = _currentCircle;
@@ -146,6 +147,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
     QColor enterColor = QColor(0,200,50,255);
     QColor leaveColor = QColor(200,0,50,255);
     QColor currentColor = QColor(200,50,200,255);
+    QColor sweepLineColor = QColor(155,155,155,100);
 
     QPen p = painter.pen();
 
@@ -171,6 +173,7 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
         painter.setBrush(leaveColor);
     }
     painter.drawEllipse(_referentPoint,4,4);
+    painter.drawLine(_currentPoint, _referentPoint);
 
 
     p.setColor(circleColor);
@@ -198,6 +201,32 @@ void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
     painter.drawEllipse(_globalMaxCircle,_radius,_radius);
 
     painter.drawText(_globalMaxCircle,QString::number(_globalMaxCount));
+
+    p.setColor(sweepLineColor);
+    p.setWidthF(1);
+    painter.setPen(p);
+
+    QPoint sweepLineEnd;
+    int kx = (_currentCircle.x() - _currentPoint.x()) * _pRenderer->width() / _radius * 2;
+    int ky = (_currentCircle.y() - _currentPoint.y()) * _pRenderer->width() / _radius * 2;
+    sweepLineEnd.setX(_currentPoint.x() + kx);
+    sweepLineEnd.setY(_currentPoint.y() + ky);
+
+    // Sweep line
+    painter.drawLine(_currentPoint, sweepLineEnd);
+    // Horizontal line
+    painter.drawLine(_currentPoint, QPoint(_pRenderer->width(), _currentPoint.y()));
+
+    double r = _radius * 1.3;
+    // if angle is negative, draw it other way around
+    double angle = _currentAngle >= 0 ? _currentAngle : -(M_PI - _currentAngle);
+    // in draw arc function, full circle is 360 * 16, positive oriented
+    angle = -16*_currentAngle*180/M_PI;
+
+    // Arc between sweep line and horizontal line
+    painter.drawArc(_currentPoint.x() - r, _currentPoint.y() - r,
+                    2 * r, 2 * r,
+                    0, angle);
 }
 
 void FixedRadiusCircle::runNaiveAlgorithm()
