@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     /* Ovde se ubacuju opcije za izbor studentskih projekata [START]*/
     ui->algorithmType->addItem("Određivanje dve najbliže tačke u ravni", QVariant(NEAREST_POINTS));
     ui->algorithmType->addItem("Konveksni omotač (Incremental insertion)", QVariant(INCREMENTAL_INSERTION));
-    ui->algorithmType->addItem("Konveksni omotač (QuickHull) - under construction", QVariant(QUICK_HULL));
+    ui->algorithmType->addItem("Konveksni omotač (QuickHull)", QVariant(QUICK_HULL));
     //ui->algorithmType->addItem("Odredjivanje najkraceg puta sa obilazenjem prepreka za tackastog robota", QVariant(POINT_ROBOT_SHORTEST_PATH));
     ui->algorithmType->addItem("Quadtree provera kolizije", QVariant(QUADTREE));
     ui->algorithmType->addItem("Odredjivanje diska najmanjeg poluprecnika koji pokriva sve tacke u ravni", QVariant(SMALLEST_ENCLOSING_CIRCLE));
