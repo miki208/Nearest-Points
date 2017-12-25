@@ -8,8 +8,8 @@
 
 #include "algorithmbase.h"
 
-#define ENTER 0
-#define LEAVE 1
+#define ENTER true
+#define LEAVE false
 
 class FixedRadiusCircle : public AlgorithmBase
 {

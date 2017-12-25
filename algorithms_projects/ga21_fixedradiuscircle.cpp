@@ -58,8 +58,8 @@ void FixedRadiusCircle::runAlgorithm()
                 double beta = A+B;
 
                 // Pushing point twice (when it enters the circle and when it leaves it)
-                nearPoints.push_back(std::make_pair(alpha, std::make_pair(true,point)));
-                nearPoints.push_back(std::make_pair(beta, std::make_pair(false,point)));
+                nearPoints.push_back(std::make_pair(alpha, std::make_pair(ENTER,point)));
+                nearPoints.push_back(std::make_pair(beta, std::make_pair(LEAVE,point)));
             }
         }
 
@@ -67,11 +67,8 @@ void FixedRadiusCircle::runAlgorithm()
         std::sort(nearPoints.begin(), nearPoints.end(),
                   [](const std::pair<double, std::pair<bool,QPoint>> & a, const std::pair<double, std::pair<bool,QPoint>> & b) -> bool
                   {
-                      if(a.first != b.first)
-                          return a.first < b.first;
-                      if(a.second.first == ENTER)
-                          return false;
-                      return true;
+//                      return a.first < b.first;
+                      return a.first != b.first ? a.first < b.first : a.second.first == ENTER;
                   });
 
         // Circle will have current inside
