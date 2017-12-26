@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Konveksni omotač (Incremental insertion)", QVariant(INCREMENTAL_INSERTION));
     ui->algorithmType->addItem("Konveksni omotač (QuickHull)", QVariant(QUICK_HULL));
     //ui->algorithmType->addItem("Odredjivanje najkraceg puta sa obilazenjem prepreka za tackastog robota", QVariant(POINT_ROBOT_SHORTEST_PATH));
-    ui->algorithmType->addItem("Quadtree provera kolizije", QVariant(QUADTREE));
+    ui->algorithmType->addItem("Algoritam za određivanje kolizija korišćenjem strukture Quadtree", QVariant(QUADTREE));
     ui->algorithmType->addItem("Odredjivanje diska najmanjeg poluprecnika koji pokriva sve tacke u ravni", QVariant(SMALLEST_ENCLOSING_CIRCLE));
     ui->algorithmType->addItem("Pozicioniranje kruga fiksnog precnika u ravni - maksimizovanje tacaka u njegovoj unutrasnjosti", QVariant(FIXEDRADIUSCIRCLE));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
