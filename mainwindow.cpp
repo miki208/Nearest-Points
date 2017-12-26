@@ -183,7 +183,7 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             }
             break;
         case SMALLEST_ENCLOSING_CIRCLE:
-            _pAlgorithm = new ga18_smallestEnclosingDisk(_renderArea, _delayMs, _filename);
+            _pAlgorithm = new MinEnclosingCircle(_renderArea, _delayMs, _filename);
             break;
         case FIXEDRADIUSCIRCLE:
             int radius = ui->gb3_params->findChild<QLineEdit*>("gui_radius")->text().toInt(&checker);
