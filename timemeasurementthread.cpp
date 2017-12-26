@@ -13,6 +13,7 @@
 #include "algorithms_projects/ga05_quickhull.h"
 #include "algorithms_projects/ga16_quadtree.h"
 #include "algorithms_projects/ga21_fixedradiuscircle.h"
+#include "algorithms_projects/ga11_intervalsearchtree.h"
 
 TimeMeasurementThread::TimeMeasurementThread(int algorithmType, int minValue, int step, int maxValue)
     :QThread (), _algorithmType(algorithmType), _minValue(minValue), _step(step), _maxValue(maxValue)
@@ -59,6 +60,9 @@ void TimeMeasurementThread::run()
                 break;
             case MainWindow::FIXEDRADIUSCIRCLE:
                 pAlgorithm = new FixedRadiusCircle(nullptr, 0, 70, "", i);
+                break;
+            case MainWindow::INTERVAL_SEARCH_TREE:
+                pAlgorithm = new IntervalSearchTree(nullptr, 0, "", i);
                 break;
         }
 
