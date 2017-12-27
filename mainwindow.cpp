@@ -197,6 +197,9 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             _pAlgorithm = new FixedRadiusCircle(_renderArea, _delayMs, radius, _filename);
             break;
         }
+        case CONVEXHULLFORDISKS:
+            _pAlgorithm = new ConvexHullForDisks::ConvexHullForDisks(_renderArea, _delayMs, _filename);
+            break;
         case INTERVAL_SEARCH_TREE:
             QString line = ui->gb3_params->findChild<QLineEdit*>("gui_interval")->text();
             QStringList fields = line.split(",");
@@ -216,9 +219,6 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             IntervalSearchTree *newTree = new IntervalSearchTree(_renderArea, _delayMs, _filename);
             newTree->setLine(QLineF(x1, 20, x2, 20));
             _pAlgorithm  = newTree;
-            break;
-	case CONVEXHULLFORDISKS:
-            _pAlgorithm = new ConvexHullForDisks::ConvexHullForDisks(_renderArea, _delayMs, _filename);
             break;
     }
 
