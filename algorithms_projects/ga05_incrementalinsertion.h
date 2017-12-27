@@ -19,12 +19,14 @@ public:
     void runNaiveAlgorithm();
 
     std::vector<QPoint> getConvexHullTest() const;
+    std::vector<QPoint> getConvexHull() const;
 
 private:
     int _xPositionOfSweepline;
     int _numberOfPointsInHull;
     bool _hasProblematicPoints;
     std::vector<Point> _complexPoints;
+    std::vector<QPoint> _convexHull;
 
     bool _compare(const QPoint& p1, const QPoint& p2);
     bool _whichSide(QPoint x, QPoint x1, QPoint x2);

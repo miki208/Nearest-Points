@@ -128,6 +128,11 @@ void IncrementalInsertion::runAlgorithm()
         AlgorithmBase_updateCanvasAndBlock();
     }
 
+    for (unsigned int i = 0; i < _numberOfPointsInHull; ++i)
+    {
+        _convexHull.push_back(_complexPoints[i].getValue());
+    }
+
     emit animationFinished();
 }
 
@@ -211,6 +216,14 @@ bool IncrementalInsertion::_compare(const QPoint &p1, const QPoint &p2)
             return false;
         }
     }
+}
+
+//-----------------------------------------------------------------------------
+// getConvexHull
+//-----------------------------------------------------------------------------
+std::vector<QPoint> IncrementalInsertion::getConvexHull() const
+{
+    return _convexHull;
 }
 
 //-----------------------------------------------------------------------------
