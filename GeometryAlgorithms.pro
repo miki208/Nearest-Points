@@ -45,7 +45,8 @@ SOURCES += \
     algorithms_projects/ga16_quadtree.cpp \
     algorithms_projects/ga15_pointrobotshortestpath.cpp \
     algorithms_projects/ga21_fixedradiuscircle.cpp \
-    algorithms_projects/ga18_smallestenclosingdisk.cpp
+    algorithms_projects/ga18_smallestenclosingdisk.cpp \
+    algorithms_projects/ga19_convexhullfordisks.cpp
 
 	
 HEADERS += \
@@ -72,7 +73,8 @@ HEADERS += \
     algorithms_projects/ga16_quadtree.h \
     algorithms_projects/ga15_pointrobotshortestpath.h \
     algorithms_projects/ga21_fixedradiuscircle.h \
-    algorithms_projects/ga18_smallestenclosingdisk.h
+    algorithms_projects/ga18_smallestenclosingdisk.h \
+    algorithms_projects/ga19_convexhullfordisks.h
 
 FORMS += \
         mainwindow.ui

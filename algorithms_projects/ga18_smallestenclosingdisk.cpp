@@ -42,7 +42,7 @@ void ga18_smallestEnclosingDisk::drawAlgorithm(QPainter &painter) const
         painter.drawPoint(points[i]);
     }
     for ( int i = 0; i < n; i+=3){
-        Circle cir(points[i], points[i+1],points[i+2]);
+        Disk cir(points[i], points[i+1],points[i+2]);
         painter.drawEllipse(cir.center, qreal(cir.r), qreal(cir.r));
         qDebug() << "r: " << cir.r << " I am here baby";
     }
@@ -85,7 +85,7 @@ void ga18_smallestEnclosingDisk::minDisk(
 }
 
 
-Circle::Circle( const QPointF p1, const QPointF p2, const QPointF p3 )
+Disk::Disk( const QPointF p1, const QPointF p2, const QPointF p3 )
 {
     double ma = ( p2.y() - p1.y() ) / ( p2.x() - p1.x() );
     double mb = ( p3.y() - p2.y() ) / ( p3.x() - p2.x() );
@@ -101,7 +101,7 @@ Circle::Circle( const QPointF p1, const QPointF p2, const QPointF p3 )
 }
 
 
-Circle::Circle( const QPointF p1, const QPointF p2)
+Disk::Disk( const QPointF p1, const QPointF p2)
 {
     center = (p1+p2)/2;
     r = my_utils::distance(center,p1);

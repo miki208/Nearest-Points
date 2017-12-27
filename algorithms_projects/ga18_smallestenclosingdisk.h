@@ -17,13 +17,13 @@ namespace my_utils
 }
 
 
-struct Circle
+struct Disk
 {
 public:
-    Circle(QPointF cen, double rad, double ar)
+    Disk(QPointF cen, double rad, double ar)
         : center(cen), r(rad), area(ar) {}
-    Circle(QPointF p1, QPointF p2, QPointF p3);
-    Circle(QPointF p1, QPointF p2);
+    Disk(QPointF p1, QPointF p2, QPointF p3);
+    Disk(QPointF p1, QPointF p2);
     QPointF center;
     double r;
     double area;
