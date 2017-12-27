@@ -28,7 +28,7 @@ QT_CHARTS_USE_NAMESPACE
 #include "algorithms_projects/ga18_smallestenclosingdisk.h"
 #include "algorithms_projects/ga21_fixedradiuscircle.h"
 #include "algorithms_projects/ga19_convexhullfordisks.h"
-
+#include "algorithms_projects/ga11_intervalsearchtree.h"
 #include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->algorithmType->addItem("Odredjivanje diska najmanjeg poluprecnika koji pokriva sve tacke u ravni", QVariant(SMALLEST_ENCLOSING_CIRCLE));
     ui->algorithmType->addItem("Pozicioniranje kruga fiksnog precnika u ravni - maksimizovanje tacaka u njegovoj unutrasnjosti", QVariant(FIXEDRADIUSCIRCLE));    
     ui->algorithmType->addItem("Convex hull for disks", QVariant(CONVEXHULLFORDISKS));
+    ui->algorithmType->addItem("Stablo pretrage duzi", QVariant(INTERVAL_SEARCH_TREE));
     /* Ovde se ubacuju opcije za izbor studentskih projekata [END]*/
     ui->algorithmType->insertSeparator(MAX_PROJECTS);
 
@@ -186,15 +187,37 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             }
             break;
         case SMALLEST_ENCLOSING_CIRCLE:
-            _pAlgorithm = new ga18_smallestEnclosingDisk(_renderArea, _delayMs, _filename);
+            _pAlgorithm = new MinEnclosingCircle(_renderArea, _delayMs, _filename);
             break;
-//        case FIXEDRADIUSCIRCLE:
-//            int radius = ui->gb3_params->findChild<QLineEdit*>("gui_radius")->text().toInt(&checker);
-//            if(!checker)
-//                radius = 70;
-//            _pAlgorithm = new FixedRadiusCircle(_renderArea, _delayMs, radius, _filename);
-//            break;
-        case CONVEXHULLFORDISKS:
+        case FIXEDRADIUSCIRCLE:
+        {
+            int radius = ui->gb3_params->findChild<QLineEdit*>("gui_radius")->text().toInt(&checker);
+            if(!checker)
+                radius = 70;
+            _pAlgorithm = new FixedRadiusCircle(_renderArea, _delayMs, radius, _filename);
+            break;
+        }
+        case INTERVAL_SEARCH_TREE:
+            QString line = ui->gb3_params->findChild<QLineEdit*>("gui_interval")->text();
+            QStringList fields = line.split(",");
+            int x1, x2;
+            bool checker1, checker2;
+
+            if(fields.size() == 2){
+                x1 = fields.at(0).toInt(&checker1);
+                x2 = fields.at(1).toInt(&checker2);
+            }
+            else if(fields.size() != 2 || !checker1 || !checker2){
+               // QErrorMessage::qtHandler()->showMessage("HELLO WORLD");
+                x1 = 100;
+                x2 = 300;
+            }
+
+            IntervalSearchTree *newTree = new IntervalSearchTree(_renderArea, _delayMs, _filename);
+            newTree->setLine(QLineF(x1, 20, x2, 20));
+            _pAlgorithm  = newTree;
+            break;
+	case CONVEXHULLFORDISKS:
             _pAlgorithm = new ConvexHullForDisks::ConvexHullForDisks(_renderArea, _delayMs, _filename);
             break;
     }
@@ -276,6 +299,15 @@ void MainWindow::addAditionalParams(int algorithmType)
         text->setObjectName("gui_quadtree_input_size");
         additionalOptionsLayout->addWidget(label, 1, 0, 1, 1);
         additionalOptionsLayout->addWidget(text, 1, 1, 1, 1);
+        ui->gb3_params->setLayout(additionalOptionsLayout);
+    }
+    else if (algorithmType == INTERVAL_SEARCH_TREE)
+    {
+        QLabel* label = new QLabel("Koordinata duzi za koju se trazi \npresek u formatu  x,y: ");
+        QLineEdit* text = new QLineEdit("100,300");
+        text->setObjectName("gui_interval");
+        additionalOptionsLayout->addWidget(label, 0, 0, 1, 1);
+        additionalOptionsLayout->addWidget(text, 1, 0, 1, 1);
         ui->gb3_params->setLayout(additionalOptionsLayout);
     }
 }

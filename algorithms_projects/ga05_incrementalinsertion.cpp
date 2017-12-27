@@ -142,13 +142,13 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
 
     // draw sweep line
     p.setWidth(1);
-    p.setColor(QColor(30, 100, 255));
+    p.setColor(Qt::darkGray);
     painter.setPen(p);
     painter.drawLine(_xPositionOfSweepline, 0, _xPositionOfSweepline, _pRenderer->height());
 
     // draw convex hull
     p.setWidth(2);
-    p.setColor(QColor(0, 130, 255));
+    p.setColor(Qt::darkBlue);
     painter.setPen(p);
     const Point *currentPoint = &(_complexPoints[0]);
     if (_numberOfPointsInHull > 1)
@@ -161,9 +161,9 @@ void IncrementalInsertion::drawAlgorithm(QPainter &painter) const
     }
 
     // draw points
-    p.setWidth(4);
+    p.setWidth(7);
     p.setCapStyle(Qt::RoundCap);
-    p.setColor(Qt::red);
+    p.setColor(Qt::darkRed);
     painter.setPen(p);
     for (const QPoint &pt : _points)
     {

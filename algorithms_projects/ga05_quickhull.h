@@ -20,17 +20,20 @@ public:
     std::vector<QPoint> getConvexHull() const;
 
 private:
+    mutable const QPoint *_minXPoint;
+    mutable const QPoint *_maxXPoint;
+
     std::vector<QPoint> _convexHull;
-    std::vector<QPoint> _pointDrawVector;
+    std::vector<std::pair<QPoint, QPoint>> _pointDrawVector;
 
     const QPoint *_pointToHighlight;
     bool _findingMaxPointIndicator;
-
 
     void _findHull(const QPoint &p1, const QPoint &p2, const std::vector<const QPoint*> &points);
     short _whichSide(const QPoint &p, const QPoint &p1, const QPoint &p2);
     double _calculateDistance(const QPoint &p, const QPoint &p1, const QPoint &p2);
     static bool _compare(const QPoint &p1, const QPoint &p2) { return p1.x() < p2.x(); }
+    QPoint _getPointOnSegment(const QPoint *p) const;
 };
 
 #endif // GA05_QUICKHULL_H

@@ -54,6 +54,16 @@ PointRobotShortestPath::PointRobotShortestPath(QWidget *pRender, int delayMs, st
 
     std::string end = "v_" + std::to_string(_pEnd.x()) + "," + std::to_string(_pEnd.y());
     _visibilityGraph.addVertex(end, _pEnd);
+
+    /*
+
+    std::cout << _visibilityGraph.vertices().size() << std::endl;
+    std::map<std::string, vertex* > verts = _visibilityGraph.vertices();
+    std::map<std::string, vertex* >::iterator it;
+    for(it = verts.begin(); it!=verts.end(); it++)
+    {
+        std::cout << it->first << ": " << it->second->_coordinates.x() << ", " << it->second->_coordinates.y() << std:: endl;
+    }*/
 }
 
 void PointRobotShortestPath::runAlgorithm()
@@ -62,19 +72,21 @@ void PointRobotShortestPath::runAlgorithm()
 /*********************************************************************
  *                             VISIBITY GRAPH                        *
  *********************************************************************/
-
+//    int c = 0;
     std::map<std::string, vertex*> vertices = _visibilityGraph.vertices();
     std::map<std::string, vertex*>::iterator it, jt;
     for(it = vertices.begin(); it!=vertices.end(); it++)
-        for(jt = vertices.begin(); jt!=vertices.end(); jt++)
+        for(jt = std::next(it); jt!=vertices.end(); jt++)
         {
             if(it->first != jt->first)
             {
                 QPoint p1 = it->second->_coordinates;
                 QPoint p2 = jt->second->_coordinates;
 
-                bool add = true;
+//                _visibilityGraph.addEdge(it->first, jt->first, utils::distance(p1, p2));
+//                AlgorithmBase_updateCanvasAndBlock();
 
+                bool add = true;
                 std::vector<HalfEdge*> edges = _obstacles.edges();
                 for(int i=0; i<edges.size(); i+=2)
                 {
@@ -84,19 +96,30 @@ void PointRobotShortestPath::runAlgorithm()
                     QPoint q1 = e->origin()->coordinates();
                     QPoint q2 = e->twin()->origin()->coordinates();
 
+                    /*
+
+                    if((p1 == q1 && p2 == q2) || (p1 == q2 && p2 == q1))
+                        std::cout << p1.x() << ", " << p1.y() << " ; " <<  p2.x() << ", " << p2.y() << " == "
+                              << q1.x() << ", " << q1.y() << " ; " <<  q2.x() << ", " << q2.y() << std:: endl;
+*/
+
                     bool intersect = segmentIntersection(p1, p2, q1, q2, &sin);
+                    //sin = QPoint(std::floor(sin.x()+0.5), std::floor(sin.y()+0.5));
                     if((p1 == q1 && p2 == q2) || (p1 == q2 && p2 == q1))
                     {
+//                        c++;
                         _visibilityGraph.addEdge(it->first, jt->first, utils::distance(p1, p2));
                         AlgorithmBase_updateCanvasAndBlock();
+                        add = false;
                         break;
                     }
-                    else if(intersect && sin != p1 && sin != p2)
+                    if ( p1 == q1 || p2== q1 || p1 == q2 || p2 == q2)
+                        continue;
+                    if(intersect && sin != QPointF(p1) && sin != QPointF(p2))
                     {
                         add = false;
                         break;
                     }
-
                 }
 
                 QPointF midpoint((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
@@ -107,11 +130,10 @@ void PointRobotShortestPath::runAlgorithm()
                 }
             }
         }
-
+//    std::cout << c << std::endl;
 /*********************************************************************
- *                             DIJKSTRA                              *
+ *                             PATH FINDING                          *
  *********************************************************************/
-
 
 }
 
@@ -146,7 +168,7 @@ void PointRobotShortestPath::drawAlgorithm(QPainter &painter) const
         std::vector<std::pair<double, vertex*> >::iterator jt;
         for(jt=edges.begin(); jt!=edges.end(); jt++)
         {
-            //std::cout << jt->second->_coordinates.x() << " " << jt->second->_coordinates.y() << std::endl;
+  //          std::cout << jt->second->_coordinates.x() << " " << jt->second->_coordinates.y() << std::endl;
             painter.drawLine(it->second->_coordinates, jt->second->_coordinates);
         }
 
@@ -224,6 +246,9 @@ bool PointRobotShortestPath::pointInsidePolygon(QPointF p1)
         QPointF q2 = e->twin()->origin()->coordinates();
         QPointF p2 = QPointF(100000, p1.y());
         QPointF in;
+
+//        if(e->incidentFace() == nullptr || e->twin()->incidentFace() == nullptr)
+//            continue;
 
         if(segmentIntersection(p1, p2, q1, q2, &in))
         {
