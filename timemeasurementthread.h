@@ -4,10 +4,10 @@
 #include <QThread>
 
 /*QChart*/
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
+//#include <QtCharts/QChartView>
+//#include <QtCharts/QLineSeries>
 
-QT_CHARTS_USE_NAMESPACE
+//QT_CHARTS_USE_NAMESPACE
 
 #include "algorithmbase.h"
 
