@@ -79,7 +79,11 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
     }
 
     _findHull(p1, *points[maxPointIndex], topSidePoints);
+    if (_destroyAnimation)
+        return;
     _findHull(*points[maxPointIndex], p2, bottomSidePoints);
+    if (_destroyAnimation)
+        return;
 }
 
 //-----------------------------------------------------------------------------
@@ -112,8 +116,11 @@ void QuickHull::runAlgorithm()
 
     _pointDrawVector.push_back(std::make_pair(*maxXPoint, *minXPoint));
     _findHull(*minXPoint, *maxXPoint, topSidePoints);
+    if (_destroyAnimation)
+        return;
     _findHull(*maxXPoint, *minXPoint, bottomSidePoints);
-
+    if (_destroyAnimation)
+        return;
     emit animationFinished();
 }
 

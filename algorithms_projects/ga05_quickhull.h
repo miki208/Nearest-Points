@@ -20,14 +20,14 @@ public:
     std::vector<QPoint> getConvexHull() const;
 
 private:
-    mutable const QPoint *_minXPoint;
-    mutable const QPoint *_maxXPoint;
+    const QPoint *_minXPoint;
+    const QPoint *_maxXPoint;
+    const QPoint *_pointToHighlight;
+
+    bool _findingMaxPointIndicator;
 
     std::vector<QPoint> _convexHull;
     std::vector<std::pair<QPoint, QPoint>> _pointDrawVector;
-
-    const QPoint *_pointToHighlight;
-    bool _findingMaxPointIndicator;
 
     void _findHull(const QPoint &p1, const QPoint &p2, const std::vector<const QPoint*> &points);
     short _whichSide(const QPoint &p, const QPoint &p1, const QPoint &p2);
