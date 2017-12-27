@@ -43,6 +43,7 @@ public:
         QUADTREE,
         SMALLEST_ENCLOSING_CIRCLE,
         FIXEDRADIUSCIRCLE,
+        CONVEXHULLFORDISKS,
         INTERVAL_SEARCH_TREE,
         /* Ovde se ubacuju enum-i za studentske projekte
          * (nije potrebno navoditi konkretne brojeve)
