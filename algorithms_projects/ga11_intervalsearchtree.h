@@ -42,9 +42,11 @@ protected:
 
 private:
     Node *root;
+    bool static findNew;
     std::vector<QLineF> inputLineVector;    //input lines
     std::vector<QLineF> overlapVector;      //result
     std::vector<QLineF> intervalLineVector;     //lines for which will be checked overlap
+    Node *currentSearchNode;                //only used for animation
 
     void insert(Node *node, Node *parent, const QLineF &line);
     void deleteTree(Node *root);
@@ -59,7 +61,7 @@ private:
     void setChild(Node *parent, Node *child, bool setLeft);
     Node* getSibling(const Node *child);
 
-    void findOverlap(const QLineF &line, Node *root, bool leftSubtree, bool findNew);
+    void findOverlap(const QLineF &line, Node *root);
     bool existOverlap(const QLineF &line1, const QLineF &line2);
 
     void drawTree(QPainter &painter, int x, int y, Node *root) const;

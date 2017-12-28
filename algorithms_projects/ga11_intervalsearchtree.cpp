@@ -1,5 +1,14 @@
 #include "ga11_intervalsearchtree.h"
 
+#define rx 45
+#define ry 25
+#define Y_MOVE 80
+#define X_DOUBLE_RL 170
+#define X_RLEFT 70
+#define X_ROOT 200
+
+bool IntervalSearchTree::findNew = false;
+
 IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::string filename, int inputSize)
     : AlgorithmBase(pRenderer, delayMs), root(nullptr)
 {
@@ -7,10 +16,10 @@ IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::str
         inputLineVector = generateRandomLines(inputSize);
     }
     else{
-        //inputLineVector = readPointsFromFile(filename);
+        inputLineVector = readLinesFromFile(filename);
     }
     if(inputSize != DEFAULT_LINES_NUM){
-        intervalLineVector = generateRandomLines(5000);
+        intervalLineVector = generateRandomLines(20000);
     }
 
     int k = 50;
@@ -18,7 +27,6 @@ IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::str
     {
         QPointF a = intervalLineVector[i].p1();
         QPointF b = intervalLineVector[i].p2();
-        QString nodeStr = QStringLiteral("(%1, %2)").arg(a.x()).arg(b.x());
         a.setY(k);
         b.setY(k);
         k += 20;
@@ -47,7 +55,6 @@ void IntervalSearchTree::runAlgorithm(){
     for(auto const &line: inputLineVector) {
         this->insert(line);
     }
-    AlgorithmBase_updateCanvasAndBlock();
 
     this->findOverlap();
 
@@ -72,7 +79,6 @@ void IntervalSearchTree::drawAlgorithm(QPainter &painter) const{
     QPen pen(Qt::gray);
     pen.setWidth(2);
     painter.setPen(pen);
-
     for(auto const &line : inputLineVector)
     {
         QString nodeStr = QStringLiteral("%1").arg(line.p1().x());
@@ -81,67 +87,64 @@ void IntervalSearchTree::drawAlgorithm(QPainter &painter) const{
         painter.drawText(line.p2().x() + 5, line.p2().y() + 5, nodeStr);
         painter.drawLine(line);
     }
-    pen.setWidth(1);
 
-
+    painter.setPen(QPen(Qt::gray));
     drawTree(painter, painter.device()->width() / 2, 350, this->root);
 }
 
 void IntervalSearchTree::drawTree(QPainter &painter, int x, int y, Node *root) const{
-
     if(root == nullptr)
         return;
 
-    int rx = 45;
-    int ry = 25;
-
-    QRect rec(x - rx, y - ry, 2 * rx, 2 * ry);
-
     if(root->parent != nullptr && root->parent->left == root){
         if(root->left != nullptr)
-            painter.drawLine(QPoint(x, y), QPoint(x - 170, y + 80));
+            painter.drawLine(QPoint(x, y), QPoint(x - X_DOUBLE_RL, y + Y_MOVE));
         if(root->right != nullptr)
-            painter.drawLine(QPoint(x, y), QPoint(x + 70, y + 80));
+            painter.drawLine(QPoint(x, y), QPoint(x + X_RLEFT, y + Y_MOVE));
     }
     else if (root->parent == nullptr){
         if(root->left != nullptr)
-            painter.drawLine(QPoint(x, y), QPoint(x - 200, y + 80));
+            painter.drawLine(QPoint(x, y), QPoint(x - X_ROOT, y + Y_MOVE));
         if(root->right != nullptr)
-            painter.drawLine(QPoint(x, y), QPoint(x + 200, y + 80));
+            painter.drawLine(QPoint(x, y), QPoint(x + X_ROOT, y + Y_MOVE));
     }
     else{
         if(root->left != nullptr)
-            painter.drawLine(QPoint(x, y), QPoint(x - 70, y + 80));
+            painter.drawLine(QPoint(x, y), QPoint(x - X_RLEFT, y + Y_MOVE));
         if(root->right != nullptr)
-            painter.drawLine(QPoint(x, y), QPoint(x + 170, y + 80));
+            painter.drawLine(QPoint(x, y), QPoint(x + X_DOUBLE_RL, y + Y_MOVE));
     }
 
-    QPen framepen(Qt::red);
-    QColor col(framepen.color());
-    painter.setBrush(QColor(246, 246, 246));
+    if(currentSearchNode == root){
+        painter.setBrush(QColor(226, 226, 226));
+    }
+    else{
+        painter.setBrush(QColor(246, 246, 246));
+    }
 
+    QRect rec(x - rx, y - ry, 2 * rx, 2 * ry);
     if(std::find(overlapVector.begin(), overlapVector.end(), root->line) != overlapVector.end()){
-        framepen.setWidth(3);
-        painter.setPen(framepen);
+        QPen redPen(QPen(Qt::red));
+        redPen.setWidth(3);
+        painter.setPen(redPen);
     }
-
     painter.drawEllipse(rec);
+    painter.setPen(QPen(Qt::gray));
     QString nodeStr = QStringLiteral("(%1, %2)").arg(root->line.p1().x()).arg(root->line.p2().x());
     painter.drawText(rec, Qt::AlignCenter, nodeStr);
     painter.drawText(x, y-30, QStringLiteral("%1").arg(root->max));
-    painter.setPen(QPen(col));
 
     if(root->parent != nullptr && root->parent->left == root){
-        drawTree(painter, x - 170, y+80, root->left);
-        drawTree(painter, x + 70, y+80, root->right);
+        drawTree(painter, x - X_DOUBLE_RL, y + Y_MOVE, root->left);
+        drawTree(painter, x + X_RLEFT, y + Y_MOVE, root->right);
     }
     else if (root->parent == nullptr){
-        drawTree(painter, x - 200, y+80, root->left);
-        drawTree(painter, x + 200, y+80, root->right);
+        drawTree(painter, x - X_ROOT, y + Y_MOVE, root->left);
+        drawTree(painter, x + X_ROOT, y + Y_MOVE, root->right);
     }
     else {
-        drawTree(painter, x - 70, y+80, root->left);
-        drawTree(painter, x + 170, y+80, root->right);
+        drawTree(painter, x - X_RLEFT, y + Y_MOVE, root->left);
+        drawTree(painter, x + X_DOUBLE_RL, y + Y_MOVE, root->right);
     }
 }
 
@@ -175,6 +178,8 @@ void IntervalSearchTree::insert(const QLineF &line) {
     else {
         insert(root, nullptr, line);
     }
+
+    AlgorithmBase_updateCanvasAndBlock();
 }
 
 void IntervalSearchTree::insert(Node *node, Node *parent, const QLineF &line){
@@ -315,6 +320,8 @@ void IntervalSearchTree::rotateLeft(Node *parent){
 
     setChild(parent, child->left, false);
     setChild(child, parent, true);
+
+    AlgorithmBase_updateCanvasAndBlock();
 }
 
 void IntervalSearchTree::rotateRight(Node *parent){
@@ -335,6 +342,8 @@ void IntervalSearchTree::rotateRight(Node *parent){
 
     setChild(parent, child->right, true);
     setChild(child, parent, false);
+
+    AlgorithmBase_updateCanvasAndBlock();
 }
 
 void IntervalSearchTree::setLine(const QLineF &line){
@@ -343,31 +352,30 @@ void IntervalSearchTree::setLine(const QLineF &line){
 
 void IntervalSearchTree::findOverlap(){
     for(auto const& line: intervalLineVector) {
-        if(root->left != nullptr && root->left->max >= line.p1().x()){
-            findOverlap(line, root, true, false);
-        }
-        else {
-            findOverlap(line, root, false, false);
-        }
+        findOverlap(line, root);
+
+        currentSearchNode = nullptr;
+        AlgorithmBase_updateCanvasAndBlock();
     }
 }
 
-void IntervalSearchTree::findOverlap(const QLineF &line, Node *root, bool leftSubtree, bool findNew){
+void IntervalSearchTree::findOverlap(const QLineF &line, Node *root){
     if(root == nullptr)
         return;
 
+    currentSearchNode = root;
+    AlgorithmBase_updateCanvasAndBlock();
+
     if(existOverlap(line, root->line)){
         overlapVector.push_back(root->line);
-        findNew = true;
-        AlgorithmBase_updateCanvasAndBlock();
+        IntervalSearchTree::findNew = true;
     }
 
     if(root->left != nullptr && root->left->max >= line.p1().x()){
-        leftSubtree = true;
-        findOverlap(line, root->left, true, findNew);
+        findOverlap(line, root->left);
     }
-    if((findNew && leftSubtree) || !leftSubtree || root->left == nullptr){
-        findOverlap(line, root->right, false, false);
+    if(IntervalSearchTree::findNew || root->left == nullptr){
+        findOverlap(line, root->right);
     }
 }
 

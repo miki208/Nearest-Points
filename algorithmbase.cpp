@@ -140,3 +140,15 @@ std::vector<QLineF> AlgorithmBase::generateRandomLines(int linesNum)
     }
     return randomLines;
 }
+
+std::vector<QLineF> AlgorithmBase::readLinesFromFile(std::string fileName)
+{
+    std::ifstream inputFile(fileName);
+    std::vector<QLineF> lines;
+    int x1, y1, x2, y2;
+    while(inputFile >> x1 >> y1 >> x2 >> y2)
+    {
+        lines.emplace_back(x1, y1, x2, y2);
+    }
+    return lines;
+}
