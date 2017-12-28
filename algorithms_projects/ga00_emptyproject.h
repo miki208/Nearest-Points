@@ -1,3 +1,9 @@
+/*
+Autor:
+Godina: 2018
+Kratak opis problema:
+*/
+
 #ifndef GA00_EMPTYPROJECT_H
 #define GA00_EMPTYPROJECT_H
 
