@@ -22,14 +22,18 @@ public:
     std::vector<QPoint> getConvexHull() const;
 
 private:
-    int _xPositionOfSweepline;
-    int _numberOfPointsInHull;
-    bool _hasProblematicPoints;
+    unsigned int _xPositionOfSweepline;
+    unsigned int _numberOfProcessedPoints;
+
+    bool _initialCollinearPointsIndicator;
+    Point *_firstCollinearPoint;
+
     std::vector<Point> _complexPoints;
     std::vector<QPoint> _convexHull;
 
-    bool _compare(const QPoint& p1, const QPoint& p2);
-    bool _whichSide(QPoint x, QPoint x1, QPoint x2);
+    bool _compare(const QPoint& p1, const QPoint& p2) const;
+    bool _whichSide(const QPoint p, const QPoint p1, const QPoint p2) const;
+    Point* _checkCollinearity(Point &x1, Point &x2, Point &x3) const;
 };
 
 //-----------------------------------------------------------------------------
