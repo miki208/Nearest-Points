@@ -44,7 +44,7 @@ void FixedRadiusCircle::runAlgorithm()
     for(unsigned i = 0; i!=_points.size(); ++i){
         current = _points[i];
         // Picking second point on circles ring
-        for(unsigned j = 0; j!=_points.size(); ++j){
+        for(unsigned j = i+1; j!=_points.size(); ++j){
             point = _points[j];
             double distance = utils::distance(current,point);
             if (i != j && distance <= 2*_radius) {
@@ -138,16 +138,16 @@ void FixedRadiusCircle::runAlgorithm()
 
 void FixedRadiusCircle::drawAlgorithm(QPainter &painter) const
 {
+    static QColor inactivePointColor = QColor(155,155,155,255);
+    static QColor circleColor = QColor(95,95,175,255);
+    static QColor maxCircleFillColor = QColor(125,125,195,100);
+    static QColor enterColor = QColor(0,200,50,255);
+    static QColor leaveColor = QColor(200,0,50,255);
+    static QColor currentColor = QColor(200,50,200,255);
+    static QColor sweepLineColor = QColor(155,155,155,100);
+
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
-
-    QColor inactivePointColor = QColor(155,155,155,255);
-    QColor circleColor = QColor(95,95,175,255);
-    QColor maxCircleFillColor = QColor(125,125,195,100);
-    QColor enterColor = QColor(0,200,50,255);
-    QColor leaveColor = QColor(200,0,50,255);
-    QColor currentColor = QColor(200,50,200,255);
-    QColor sweepLineColor = QColor(155,155,155,100);
 
     QPen p = painter.pen();
 
@@ -241,7 +241,7 @@ void FixedRadiusCircle::runNaiveAlgorithm()
     // Picking 2 points, wich with radius can construct maximum 2 circles
     for (unsigned i=0; i<_points.size(); ++i) {
         QPoint first = _points[i];
-        for (unsigned j=0; j<_points.size(); ++j) {
+        for (unsigned j=i+1; j<_points.size(); ++j) {
             QPoint second = _points[j];
             if (i == j || utils::distance(first,second) > 2*_radius)
                 continue;
