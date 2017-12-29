@@ -9,7 +9,8 @@
 //-----------------------------------------------------------------------------
 IncrementalInsertion::IncrementalInsertion(QWidget *pRenderer, int delayMs, std::string filename, int inputSize)
     : ConvexHull(pRenderer, delayMs, filename, inputSize),
-      _xPositionOfSweepline(0), _numberOfProcessedPoints(0), _initialCollinearPointsIndicator(true), _firstCollinearPoint(nullptr)
+      _xPositionOfSweepline(0), _numberOfProcessedPoints(0), _initialCollinearPointsIndicator(true),
+      _firstCollinearPoint(nullptr)
 {}
 
 //-----------------------------------------------------------------------------
@@ -23,7 +24,10 @@ void IncrementalInsertion::runAlgorithm()
 
     // check number of points
     if (_points.size() < 3)
+    {
+        emit animationFinished();
         return;
+    }
 
     // sort raw points by their x-coordinates
     std::sort(_points.begin(), _points.end(), [&](const QPoint& lhs, const QPoint& rhs){ return _compare(lhs, rhs); });
@@ -271,4 +275,3 @@ Point* IncrementalInsertion::_checkCollinearity(Point &x1, Point &x2, Point &x3)
         return nullptr;
     }
 }
-

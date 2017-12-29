@@ -17,14 +17,15 @@ QuickHull::QuickHull(QWidget *pRenderer, int delayMs, std::string filename, int 
 //-----------------------------------------------------------------------------
 // _findHull
 //-----------------------------------------------------------------------------
-void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<const QPoint*> &points)
+void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<const QPoint*> &points, bool canDelete)
 {
     _minXPoint = &p1;
     _maxXPoint = &p2;
-    double maxDistance = 0.0;
-    double currentDistance = 0.0;
+    double maxDistance = 0;
+    double currentDistance = 0;
     int maxPointIndex = NOT_FOUND;
 
+    // find the farthest point
     _findingMaxPointIndicator = true;
     for (unsigned int i = 0; i < points.size(); ++i)
     {
@@ -45,7 +46,7 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
     {
         return;
     }
-    else
+    else if (canDelete)
     {
         for (unsigned int i = 0; i < _pointDrawVector.size(); ++i)
         {
@@ -58,6 +59,7 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
 
     _convexHull.push_back(*points[maxPointIndex]);
 
+    // draw lines
     _pointDrawVector.push_back(std::make_pair(p1, *points[maxPointIndex]));
     AlgorithmBase_updateCanvasAndBlock();
     _pointDrawVector.push_back(std::make_pair(*points[maxPointIndex], p2));
@@ -71,17 +73,19 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
         {
             topSidePoints.push_back(p);
         }
-
-        if (_whichSide(*p, p2, *points[maxPointIndex]) == BOTTOM_SIDE)
+        else if (_whichSide(*p, p2, *points[maxPointIndex]) == BOTTOM_SIDE)
         {
             bottomSidePoints.push_back(p);
         }
     }
 
-    _findHull(p1, *points[maxPointIndex], topSidePoints);
+    // top side recursive call
+    _findHull(p1, *points[maxPointIndex], topSidePoints, true);
     if (_destroyAnimation)
         return;
-    _findHull(*points[maxPointIndex], p2, bottomSidePoints);
+
+    // bottom side recursive call
+    _findHull(*points[maxPointIndex], p2, bottomSidePoints, true);
     if (_destroyAnimation)
         return;
 }
@@ -91,6 +95,17 @@ void QuickHull::_findHull(const QPoint &p1, const QPoint &p2, const std::vector<
 //-----------------------------------------------------------------------------
 void QuickHull::runAlgorithm()
 {
+    // remove duplicates
+    auto it = std::unique(_points.begin(), _points.end());
+    _points.resize(std::distance(_points.begin(), it));
+
+    // check number of points
+    if (_points.size() < 3)
+    {
+        emit animationFinished();
+        return;
+    }
+
     // find leftmost point
     std::vector<QPoint>::iterator minXPoint = std::min_element(_points.begin(), _points.end(), _compare);
     // find rightmost point
@@ -115,12 +130,18 @@ void QuickHull::runAlgorithm()
     }
 
     _pointDrawVector.push_back(std::make_pair(*maxXPoint, *minXPoint));
-    _findHull(*minXPoint, *maxXPoint, topSidePoints);
+
+    // top side recursive call
+    _findHull(*minXPoint, *maxXPoint, topSidePoints, true);
     if (_destroyAnimation)
         return;
-    _findHull(*maxXPoint, *minXPoint, bottomSidePoints);
+
+    // bottom side recursive call
+    _findHull(*maxXPoint, *minXPoint, bottomSidePoints, topSidePoints.size() == 0 ? false : true);
     if (_destroyAnimation)
         return;
+
+    // end animation
     emit animationFinished();
 }
 
@@ -137,7 +158,7 @@ void QuickHull::drawAlgorithm(QPainter &painter) const
     p.setWidth(2);
     p.setColor(Qt::darkBlue);
     painter.setPen(p);
-    for (int i = 0; i < _pointDrawVector.size(); i++)
+    for (unsigned int i = 0; i < _pointDrawVector.size(); i++)
     {
         painter.drawLine(_pointDrawVector[i].first, _pointDrawVector[i].second);
     }
@@ -173,7 +194,7 @@ void QuickHull::runNaiveAlgorithm()
 //-----------------------------------------------------------------------------
 // _calculateDistance
 //-----------------------------------------------------------------------------
-double QuickHull::_calculateDistance(const QPoint &p, const QPoint &p1, const QPoint &p2)
+double QuickHull::_calculateDistance(const QPoint &p, const QPoint &p1, const QPoint &p2) const
 {
     double nominator = (p2.y() - p1.y())*p.x() - (p2.x() - p1.x())*p.y() + p2.x()*p1.y() - p2.y()*p1.x();
     double denominator = qPow((p2.y() - p1.y()), 2) + qPow((p2.x() - p1.x()), 2);
@@ -184,7 +205,7 @@ double QuickHull::_calculateDistance(const QPoint &p, const QPoint &p1, const QP
 //-----------------------------------------------------------------------------
 // _whichSide
 //-----------------------------------------------------------------------------
-short QuickHull::_whichSide(const QPoint &p, const QPoint &p1, const QPoint &p2)
+short QuickHull::_whichSide(const QPoint &p, const QPoint &p1, const QPoint &p2) const
 {
     int sgn = (p.x() - p1.x())*(p2.y()-p1.y()) - (p.y() - p1.y())*(p2.x() - p1.x());
 

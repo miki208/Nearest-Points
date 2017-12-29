@@ -29,9 +29,9 @@ private:
     std::vector<QPoint> _convexHull;
     std::vector<std::pair<QPoint, QPoint>> _pointDrawVector;
 
-    void _findHull(const QPoint &p1, const QPoint &p2, const std::vector<const QPoint*> &points);
-    short _whichSide(const QPoint &p, const QPoint &p1, const QPoint &p2);
-    double _calculateDistance(const QPoint &p, const QPoint &p1, const QPoint &p2);
+    void _findHull(const QPoint &p1, const QPoint &p2, const std::vector<const QPoint*> &points, bool canDelete);
+    short _whichSide(const QPoint &p, const QPoint &p1, const QPoint &p2) const;
+    double _calculateDistance(const QPoint &p, const QPoint &p1, const QPoint &p2) const;
     static bool _compare(const QPoint &p1, const QPoint &p2) { return p1.x() < p2.x(); }
     QPoint _getPointOnSegment(const QPoint *p) const;
 };
