@@ -216,7 +216,7 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
                 x2 = 300;
             }
 
-            IntervalSearchTree *newTree = new IntervalSearchTree(_renderArea, _delayMs, _filename);
+            IntervalSearchTree *newTree = new IntervalSearchTree(_renderArea, _delayMs, _filename, 0);
             newTree->setLine(QLineF(x1, 20, x2, 20));
             _pAlgorithm  = newTree;
             break;

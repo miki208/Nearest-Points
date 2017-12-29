@@ -7,10 +7,8 @@
 #define X_RLEFT 70
 #define X_ROOT 200
 
-bool IntervalSearchTree::findNew = false;
-
-IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::string filename, int inputSize)
-    : AlgorithmBase(pRenderer, delayMs), root(nullptr)
+IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::string filename, int inputLineCheckSize, int inputSize)
+    : AlgorithmBase(pRenderer, delayMs), root(nullptr), overlapVector({}), naiveOverlapVector({})
 {
     if(filename == ""){
         inputLineVector = generateRandomLines(inputSize);
@@ -18,12 +16,15 @@ IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::str
     else{
         inputLineVector = readLinesFromFile(filename);
     }
-    if(inputSize != DEFAULT_LINES_NUM){
-        intervalLineVector = generateRandomLines(20000);
+    if(inputLineCheckSize != 0){
+        intervalLineVector = generateRandomLines(5000);
+    }
+    else{
+        intervalLineVector = generateRandomLines(inputLineCheckSize);
     }
 
     int k = 50;
-    for(int i=0; i < intervalLineVector.size(); i++)
+    for(unsigned int i=0; i < intervalLineVector.size(); i++)
     {
         QPointF a = intervalLineVector[i].p1();
         QPointF b = intervalLineVector[i].p2();
@@ -33,7 +34,7 @@ IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::str
         intervalLineVector[i].setPoints(a, b);
     }
 
-    for(int i=0; i < inputLineVector.size(); i++)
+    for(unsigned int i=0; i < inputLineVector.size(); i++)
     {
         QPointF a = inputLineVector[i].p1();
         QPointF b = inputLineVector[i].p2();
@@ -47,10 +48,15 @@ IntervalSearchTree::IntervalSearchTree(QWidget* pRenderer, int delayMs, std::str
            inputLineVector[i].setPoints(a, b);
         }
     }
-
 }
 
 void IntervalSearchTree::runAlgorithm(){
+    if(intervalLineVector.size() < 1 || inputLineVector.size() < 1){
+        qWarning("Nisu uneti potrebni podaci");
+        emit animationFinished();
+        return;
+    }
+
     //Initialize structure
     for(auto const &line: inputLineVector) {
         this->insert(line);
@@ -149,10 +155,17 @@ void IntervalSearchTree::drawTree(QPainter &painter, int x, int y, Node *root) c
 }
 
 void IntervalSearchTree::runNaiveAlgorithm(){
+    if(intervalLineVector.size() < 1 || inputLineVector.size() < 1){
+        qWarning("Nisu uneti potrebni podaci");
+        emit animationFinished();
+        return;
+    }
+
     for(auto const& interval: intervalLineVector) {
         for(auto const& line2: inputLineVector) {
-            if (interval.p1().x() <= line2.p2().x() && interval.p2().x() >= line2.p1().x())
-                overlapVector.push_back(line2);
+            if (interval.p1().x() <= line2.p2().x() && interval.p2().x() >= line2.p1().x()){
+                naiveOverlapVector.push_back(line2);
+            }
         }
     }
 }
@@ -359,7 +372,7 @@ void IntervalSearchTree::findOverlap(){
     }
 }
 
-void IntervalSearchTree::findOverlap(const QLineF &line, Node *root){
+inline void IntervalSearchTree::findOverlap(const QLineF &line, Node *root){
     if(root == nullptr)
         return;
 
@@ -368,19 +381,60 @@ void IntervalSearchTree::findOverlap(const QLineF &line, Node *root){
 
     if(existOverlap(line, root->line)){
         overlapVector.push_back(root->line);
-        IntervalSearchTree::findNew = true;
+    }
+
+    bool tmp = true;
+    if(root->left != nullptr && root->left->max >= line.p1().x()){
+        int x = overlapVector.size();
+        findOverlap(line, root->left);
+        x -= overlapVector.size();
+        tmp = (x < 0)? true : false;
+    }
+    if(tmp){
+        findOverlap(line, root->right);
+    }
+}
+
+
+/*
+void IntervalSearchTree::findOverlap(const QLineF &line, Node *root){
+
+    if(root == nullptr)
+        return;
+
+    currentSearchNode = root;
+    AlgorithmBase_updateCanvasAndBlock();
+
+    if(existOverlap(line, root->line)){
+        overlapVector.push_back(root->line);
     }
 
     if(root->left != nullptr && root->left->max >= line.p1().x()){
         findOverlap(line, root->left);
     }
-    if(IntervalSearchTree::findNew || root->left == nullptr){
-        findOverlap(line, root->right);
-    }
-}
 
-bool IntervalSearchTree::existOverlap(const QLineF &line1, const QLineF &line2){
+    findOverlap(line, root->right);
+
+}*/
+
+inline bool IntervalSearchTree::existOverlap(const QLineF &line1, const QLineF &line2){
     if (line1.p1().x() <= line2.p2().x() && line1.p2().x() >= line2.p1().x())
         return true;
     return false;
+}
+
+void IntervalSearchTree::setLineIntervals(std::vector<QLineF> &intervalLine){
+    intervalLineVector = intervalLine;
+}
+
+void IntervalSearchTree::setInputLines(std::vector<QLineF> &intervalLine){
+    inputLineVector = intervalLine;
+}
+
+std::vector<QLineF> IntervalSearchTree::getOverlapVector(){
+    return overlapVector;
+}
+
+std::vector<QLineF> IntervalSearchTree::getNaiveOverlapVector(){
+    return naiveOverlapVector;
 }
