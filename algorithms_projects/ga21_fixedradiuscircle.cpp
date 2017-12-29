@@ -47,7 +47,7 @@ void FixedRadiusCircle::runAlgorithm()
         for(unsigned j = i+1; j!=_points.size(); ++j){
             point = _points[j];
             double distance = utils::distance(current,point);
-            if (i != j && distance <= 2*_radius) {
+            if (distance <= 2*_radius) {
                 _currentPoint = current;
 
                 // Calculating angle of current, circles middle and point
@@ -243,7 +243,7 @@ void FixedRadiusCircle::runNaiveAlgorithm()
         QPoint first = _points[i];
         for (unsigned j=i+1; j<_points.size(); ++j) {
             QPoint second = _points[j];
-            if (i == j || utils::distance(first,second) > 2*_radius)
+            if (utils::distance(first,second) > 2*_radius)
                 continue;
 
             int x1 = first.x();
