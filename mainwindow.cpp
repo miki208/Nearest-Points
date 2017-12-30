@@ -163,7 +163,11 @@ void MainWindow::makeNewAlgotirhm(std::string filename)
             _pAlgorithm = new Triangulation(_renderArea, _delayMs, filename);
             break;
         case NEAREST_POINTS:
-            _pAlgorithm = new NearestPoints(_renderArea, _delayMs, _filename);
+            inputDim = ui->gb3_params->findChild<QLineEdit*>("gui_inputDim")->text().toInt(&checker);
+            if(checker)
+                _pAlgorithm = new NearestPoints(_renderArea, _delayMs, _filename, inputDim);
+            else
+                _pAlgorithm = new NearestPoints(_renderArea, _delayMs, _filename);
             break;
         case INCREMENTAL_INSERTION:
             _pAlgorithm = new IncrementalInsertion(_renderArea, _delayMs, _filename);
@@ -275,6 +279,15 @@ void MainWindow::addAditionalParams(int algorithmType)
             additionalOptionsLayout->addWidget(lsi_label, 0, 0, 1, 1);
             additionalOptionsLayout->addWidget(lsi_text, 0, 1, 1, 1);
             ui->gb3_params->setLayout(additionalOptionsLayout);
+    }
+    else if(algorithmType == NEAREST_POINTS)
+    {
+        QLabel *label = new QLabel("Dimenzija ulaza: ");
+        QLineEdit *text = new QLineEdit("20");
+        text->setObjectName("gui_inputDim");
+        additionalOptionsLayout->addWidget(label, 0, 0, 1, 1);
+        additionalOptionsLayout->addWidget(text, 0, 1, 1, 1);
+        ui->gb3_params->setLayout(additionalOptionsLayout);
     }
     else if (algorithmType == FIXEDRADIUSCIRCLE)
     {
