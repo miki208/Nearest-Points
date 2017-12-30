@@ -1,3 +1,9 @@
+/*
+Autor: Milos Samardzija 1092/2016
+Godina: 2017
+Kratak opis problema: Dato je n tacaka u ravni. Potrebno je odrediti dve tacke sa najmanjim Euklidskim rastojanjem.
+*/
+
 #ifndef GA03_NEARESTPOINTS_H
 #define GA03_NEARESTPOINTS_H
 
