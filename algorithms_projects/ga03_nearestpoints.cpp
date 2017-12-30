@@ -289,15 +289,9 @@ void NearestPoints::merge(int left, int mid, int right)
 
 void NearestPoints::sort3(int left)
 {
-    for(int i = left; i < left + 3 - 1; i++) {
-        for(int j = i + 1; j < left + 3; j++) {
-            if(_points[i].y() > _points[j].y()) {
-                QPoint tmp = _points[i];
-                _points[i] = _points[j];
-                _points[j] = tmp;
-            }
-        }
-    }
+    std::sort(_points.begin() + left, _points.begin() + left + 3, [](const QPoint &p1, const QPoint &p2) {
+        return p1.y() < p2.y();
+    });
 }
 
 std::vector<QPoint> NearestPoints::points() const
